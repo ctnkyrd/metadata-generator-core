@@ -22,14 +22,7 @@ namespace metadataGenerator
                 Console.WriteLine(e);
             }
 
-            //Search the existing xml file
-            //XmlNodeList getAllNodes(XmlDocument xmlDoc, string tagName)
-            //{
-            //    XmlNodeList list =  xmlDoc.GetElementsByTagName(tagName);
-            //    return list;
-            //}
-
-            //create new xml file from scratch
+          
             void createMetaData()
             {
                 try
@@ -45,12 +38,10 @@ namespace metadataGenerator
                             )
                         );
                     
-                    //string nameOfTheFile = name;
+                 
                     xdoc.Save("GENERATEDXML\\deneme.xml");
 
-                    //do stuff
-
-                    //save the file to folder
+                   
 
                 }
                 catch (Exception e)
