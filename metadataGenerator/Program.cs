@@ -36,7 +36,7 @@ namespace metadataGenerator
                                 new XElement(gmd+"CharacterString", "12346.xml")
                                 ),
                                 new XElement(gmd + "fileIdentifier2",
-                                new XElement(gmd + "CharacterString", "123467.xml")
+                                new XElement(gmd + "CharacterString", "123478867.xml")
                             )
                         )
                         );
