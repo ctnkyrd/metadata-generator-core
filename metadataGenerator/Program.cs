@@ -33,14 +33,15 @@ namespace metadataGenerator
                             new XAttribute(XNamespace.Xmlns+"gmd", gmd),
                             new XElement(gmd+"fileIdentifier",
                                 new XElement(gmd+"CharacterString", "12346.xml")
-                                )   
+                                ),
+                                new XElement(gmd + "fileIdentifier2",
+                                new XElement(gmd + "CharacterString", "123467.xml")
                             )
+                        )
                         );
-                    
-                 
+                
                     xdoc.Save("GENERATEDXML\\deneme.xml");
 
-                   
 
                 }
                 catch (Exception e)
