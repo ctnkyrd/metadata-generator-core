@@ -64,7 +64,6 @@ namespace metadataGenerator
                             new XElement(gmd + "wfsCatalog",
                                 new XElement(gco + "CharacterString")
                                 ),
-                            //language
                             new XElement(gmd + "language",
                                 new XElement(gmd + "LanguageCode",
                                     new XAttribute("codeList", "http://www.loc.gov/standards/iso639-2/"), 
@@ -105,16 +104,17 @@ namespace metadataGenerator
 
                                 )
                             )
-                        )
-
-
+                        ),
+                                new XElement(gmd+"CharacterString", "12346.xml")
+                                ),
+                                new XElement(gmd + "fileIdentifier2",
+                                new XElement(gmd + "CharacterString", "123478asd867.xml")
                             )
                         );
-
-                    
                     xdoc.Save("GENERATEDXML\\"+fileName+".xml");
+                
+                    xdoc.Save("GENERATEDXML\\deneme.xml");
 
-                   
 
                 }
                 catch (Exception e)
