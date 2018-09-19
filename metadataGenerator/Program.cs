@@ -30,10 +30,16 @@ namespace metadataGenerator
             {
                 try
                 {
+                    //from db variables
                     string fileName = "1_KA_SIT";
+                    string personalEmail = "arda.cetinkaya@netcad.com.tr";
+
+                    //organization static variables
                     string organizationName = "Kültür ve Turizm Bakanlığı";
                     string organizationEmail = "yasingulbay@gmail.com";
-                    string personalEmail = "arda.cetinkaya@netcad.com.tr";
+
+                    //calculated variables
+                    string metadataDate = DateTime.Now.ToString("yyyy-MM-dd");
 
                     //definition of all namespaces existing in the metadata document
                     XNamespace gmd = "http://www.isotc211.org/2005/gmd";
@@ -105,16 +111,17 @@ namespace metadataGenerator
                                 )
                             )
                         ),
-                                new XElement(gmd+"CharacterString", "12346.xml")
-                                ),
-                                new XElement(gmd + "fileIdentifier2",
-                                new XElement(gmd + "CharacterString", "123478asd867.xml")
+                            new XElement(gmd+"dateStamp",
+                                new XElement(gco+"Date", metadataDate)
+                            ), 
+                            new XElement(gmd + "metadataStandardName",
+                                new XElement(gco+ "CharacterString" , "ISO19115"
+                                )
                             )
-                        );
-                    xdoc.Save("GENERATEDXML\\"+fileName+".xml");
-                
-                    xdoc.Save("GENERATEDXML\\deneme.xml");
 
+
+                            ));
+                    xdoc.Save("GENERATEDXML\\"+fileName+".xml");
 
                 }
                 catch (Exception e)
