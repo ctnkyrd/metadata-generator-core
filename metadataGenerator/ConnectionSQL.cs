@@ -26,5 +26,21 @@ namespace metadataGenerator
         {
             con.Close();
         }
+
+        public SqlDataReader DataReader(string Query_)
+        {
+            SqlCommand cmd = new SqlCommand(Query_, con);
+            SqlDataReader dr = cmd.ExecuteReader();
+            return dr;
+        }
+
+        public object ShowDataInGridView(string Query_)
+        {
+            SqlDataAdapter dr = new SqlDataAdapter(Query_, connectionString);
+            DataSet ds = new DataSet();
+            dr.Fill(ds);
+            object dataum = ds.Tables[0];
+            return dataum;
+        }
     }
 }
