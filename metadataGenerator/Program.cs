@@ -14,6 +14,7 @@ namespace metadataGenerator
         static void Main(string[] args)
         {
             ConnectionSQL SqlConnection = new ConnectionSQL();
+            Logger logger = new Logger();
             try
             {
                 createMetaData();
@@ -30,6 +31,7 @@ namespace metadataGenerator
             {
                 try
                 {
+                    logger.createLog("started");
                     //from db variables
                     string fileName = "1_KA_SIT";
                     string personalEmail = "arda.cetinkaya@netcad.com.tr";
@@ -37,6 +39,7 @@ namespace metadataGenerator
                     //organization static variables
                     string organizationName = "Kültür ve Turizm Bakanlığı";
                     string organizationEmail = "yasingulbay@gmail.com";
+                    string metaDataFolder = "GENERATEDXML";
 
                     //calculated variables
                     string metadataDate = DateTime.Now.ToString("yyyy-MM-dd");
@@ -121,7 +124,8 @@ namespace metadataGenerator
 
 
                             ));
-                    xdoc.Save("GENERATEDXML\\"+fileName+".xml");
+                    xdoc.Save(metaDataFolder+"\\"+fileName+".xml");
+                    logger.createLog(metaDataFolder+"\\" +fileName+".xml"+ " file creted");
 
                 }
                 catch (Exception e)
