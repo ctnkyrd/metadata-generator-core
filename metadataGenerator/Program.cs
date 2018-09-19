@@ -34,13 +34,22 @@ namespace metadataGenerator
                 DataTable table =  SqlConnection.ShowDataInGridView("SELECT top 50 * FROM "+metaTableName+" WHERE "+tableCriteria);
                 int totalRows = table.Rows.Count;
                 logger.createLog(metaTableName + "\n\t" + tableCriteria + "\n\t" + totalRows + "- Veri Sayısı", "i");
-                int completedRows = 0;
                 foreach (DataRow row in table.Rows)
                 {
-                    completedRows++;
                     //fetch data from dt by SQL column names
                     string rowId = row["OBJECTID"].ToString();
                     string responsibleEmail = row["USER_MODIFY_N"].ToString();
+                    //bounding box conversions
+                    BoundingBox Bbox = new BoundingBox(
+                        Convert.ToDouble(row["CLLY"]), 
+                        Convert.ToDouble(row["CURY"]), 
+                        Convert.ToDouble(row["CLLX"]), 
+                        Convert.ToDouble(row["CURY"])
+                        );
+                    string westBoundLongitude = Bbox.WBL.ToString();
+                    string eastBoundLongitude = Bbox.EBL.ToString();
+                    string southBoundLatitude = Bbox.SBL.ToString();
+                    string northBoundLatitude = Bbox.NBL.ToString();
 
                     createMetaData(rowId, responsibleEmail);
                     spin.Turn();
@@ -162,7 +171,25 @@ namespace metadataGenerator
     }
 
     }
+        //bbox class
+        class BoundingBox
+    {
+        public double WBL { get; set; }
+        public double EBL { get; set; }
+        public double SBL { get; set; }
+        public double NBL { get; set; }
 
+        public BoundingBox(double westBoundLongitude, double eastBoundLongitude, double southBoundLatitude, double northBoundLatitude)
+        {
+            WBL = westBoundLongitude;
+            EBL = eastBoundLongitude;
+            SBL = southBoundLatitude;
+            NBL = northBoundLatitude;
+        }
+    }
+
+
+    //for console spinner
     public class ConsoleSpinner
     {
         int counter;
