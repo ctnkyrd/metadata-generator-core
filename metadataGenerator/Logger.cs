@@ -26,17 +26,12 @@ namespace metadataGenerator
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
-                    Console.WriteLine("Log Klasörü Oluşturuldu");
-                }
-                else
-                {
-                    Console.WriteLine("Log Klasörü Mevcut");
                 }
             }
             catch (Exception e)
             {
 
-                Console.WriteLine(e.Message);
+                createLog(e.Message.ToString(), "e");
             }
 
         }
@@ -52,11 +47,14 @@ namespace metadataGenerator
             }
             catch (Exception e)
             {
-
                 Console.WriteLine(e.Message);
             }
-        }
 
+            finally
+            {
+                //nothing continue
+            }
+        }
 
     }
 }

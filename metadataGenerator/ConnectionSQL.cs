@@ -4,16 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
+using System.Configuration;
 using System.Data.SqlClient;
 
 namespace metadataGenerator
 {
     public class ConnectionSQL
     {
-        string connectionString = "Data Source=192.168.30.138;" +
-                                    "Initial Catalog=TUES;" +
-                                    "User id=sa;" +
-                                    "Password=Ankara123;";
+        string connectionString = ConfigurationManager.AppSettings["SQLServer"];
         SqlConnection con;
 
         public void openConnection()
@@ -34,13 +32,14 @@ namespace metadataGenerator
             return dr;
         }
 
-        public object ShowDataInGridView(string Query_)
+        public DataTable ShowDataInGridView(string Query_)
         {
+            DataTable table = new DataTable();
             SqlDataAdapter dr = new SqlDataAdapter(Query_, connectionString);
             DataSet ds = new DataSet();
             dr.Fill(ds);
-            object dataum = ds.Tables[0];
-            return dataum;
+            dr.Fill(table);
+            return table;
         }
     }
 }

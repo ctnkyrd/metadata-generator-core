@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml;
 using System.Data;
+using System.Configuration;
+using System.Threading;
 
 namespace metadataGenerator
 {
@@ -13,33 +15,56 @@ namespace metadataGenerator
     {
         static void Main(string[] args)
         {
+            //create necessary classes
             ConnectionSQL SqlConnection = new ConnectionSQL();
             Logger logger = new Logger();
-            try
+
+            logger.createLog("Metaveri Oluşturma Başlatıldı", "i");
+            //get static values from app.config
+            string metaTableName = ConfigurationManager.AppSettings["metaTableName"];
+            string tableCriteria = ConfigurationManager.AppSettings["tableCriteria"];
+            string organizationEmail = ConfigurationManager.AppSettings["organizationEmail"];
+            string organizationName = ConfigurationManager.AppSettings["organizationName"];
+            string metaDataFolder = ConfigurationManager.AppSettings["metaDataFolder"];
+
+            var spin = new ConsoleSpinner();
+            Console.Write("Tamamlanıyor....");
+            try //main code block
             {
-                createMetaData();
-                //DataTable data = SqlConnection.ShowDataInGridView("SELECT * FROM ANIT WHERE GEO_DURUM = 1") as DataTable;
-                //foreach
+                DataTable table =  SqlConnection.ShowDataInGridView("SELECT top 50 * FROM "+metaTableName+" WHERE "+tableCriteria);
+                int totalRows = table.Rows.Count;
+                logger.createLog(metaTableName + "\n\t" + tableCriteria + "\n\t" + totalRows + "- Veri Sayısı", "i");
+                int completedRows = 0;
+                foreach (DataRow row in table.Rows)
+                {
+                    completedRows++;
+                    //fetch data from dt by SQL column names
+                    string rowId = row["OBJECTID"].ToString();
+                    string responsibleEmail = row["USER_MODIFY_N"].ToString();
+
+                    createMetaData(rowId, responsibleEmail);
+                    spin.Turn();
+                }
+
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logger.createLog(e.Message.ToString(), "e");
             }
-
+            finally
+            {
+                Console.Write("\r Tamamlandı!");
+                logger.createLog("İşlem Başarıyla Tamamlandı", "s");
+            }
           
-            void createMetaData()
+            void createMetaData(string oid, string responsibleEmail)
             {
                 try
                 {
-                    logger.createLog("started", "i");
                     //from db variables
-                    string fileName = "1_KA_SIT";
-                    string personalEmail = "arda.cetinkaya@netcad.com.tr";
+                    string fileName = oid + "_KA_SIT";
+                    string dataResponsibleEmail = responsibleEmail;
 
-                    //organization static variables
-                    string organizationName = "Kültür ve Turizm Bakanlığı";
-                    string organizationEmail = "yasingulbay@gmail.com";
-                    string metaDataFolder = "GENERATEDXML";
 
                     //calculated variables
                     string metadataDate = DateTime.Now.ToString("yyyy-MM-dd");
@@ -98,7 +123,7 @@ namespace metadataGenerator
                                             new XElement(gmd + "address",
                                                 new XElement(gmd + "CI_Address",
                                                     new XElement(gmd + "electronicMailAddress", new XElement(gco + "CharacterString", organizationEmail)),
-                                                    new XElement(gmd + "electronicMailAddress", new XElement(gco + "CharacterString", personalEmail))
+                                                    new XElement(gmd + "electronicMailAddress", new XElement(gco + "CharacterString", dataResponsibleEmail))
                                                 )
                                             )
                                         )
@@ -125,16 +150,35 @@ namespace metadataGenerator
 
                             ));
                     xdoc.Save(metaDataFolder+"\\"+fileName+".xml");
-                    logger.createLog(metaDataFolder+"\\" +fileName+".xml"+ " file creted", "i");
-
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    logger.createLog(e.Message.ToString(), "e");
                 }
 
             }
-        }
 
+               
+    }
+
+    }
+
+    public class ConsoleSpinner
+    {
+        int counter;
+
+        public void Turn()
+        {
+            counter++;
+            switch (counter % 4)
+            {
+                case 0: Console.Write("/"); counter = 0; break;
+                case 1: Console.Write("-"); break;
+                case 2: Console.Write("\\"); break;
+                case 3: Console.Write("|"); break;
+            }
+            Thread.Sleep(100);
+            Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
+        }
     }
 }
