@@ -50,10 +50,10 @@ namespace metadataGenerator
                 string text = DateTime.Now.ToString("[yyyyMMdd HH:mm:ss.fff]") + logTypes[logType] + "- "+ logText + Environment.NewLine;
                 File.AppendAllText(logFilePath + "\\" + logFileName, text);
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
-                throw;
+                Console.WriteLine(e.Message);
             }
         }
 
