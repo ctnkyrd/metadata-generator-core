@@ -10,8 +10,14 @@ namespace metadataGenerator
     class Logger
     {
         public static string logFilePath = "GENERATEDXML\\Logs";
-        string text, path;
+        public static Dictionary<string, string> logTypes = new Dictionary<string, string> {
+            {"i", "[INFORMATION]"},
+            {"s", "[SUCCESS]"},
+            {"w", "[WARNING]"},
+            {"e", "[ERROR]"}
+        };
 
+        
         public void makeLogDir(string folderPath)
         {
             try
@@ -35,13 +41,13 @@ namespace metadataGenerator
 
         }
 
-        public void createLog(string logText)
+        public void createLog(string logText, string logType)
         {
             makeLogDir(logFilePath);
             try
             {
                 string logFileName = DateTime.Now.ToString("yyyyMMdd") + ".txt";
-                string text = DateTime.Now.ToString("[yyyyMMdd HH:mm:ss.fff]") +"- "+ logText + Environment.NewLine;
+                string text = DateTime.Now.ToString("[yyyyMMdd HH:mm:ss.fff]") + logTypes[logType] + "- "+ logText + Environment.NewLine;
                 File.AppendAllText(logFilePath + "\\" + logFileName, text);
             }
             catch (Exception)

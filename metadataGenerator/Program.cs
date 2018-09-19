@@ -31,7 +31,7 @@ namespace metadataGenerator
             {
                 try
                 {
-                    logger.createLog("started");
+                    logger.createLog("started", "i");
                     //from db variables
                     string fileName = "1_KA_SIT";
                     string personalEmail = "arda.cetinkaya@netcad.com.tr";
@@ -125,7 +125,7 @@ namespace metadataGenerator
 
                             ));
                     xdoc.Save(metaDataFolder+"\\"+fileName+".xml");
-                    logger.createLog(metaDataFolder+"\\" +fileName+".xml"+ " file creted");
+                    logger.createLog(metaDataFolder+"\\" +fileName+".xml"+ " file creted", "i");
 
                 }
                 catch (Exception e)
