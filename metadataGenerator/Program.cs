@@ -154,10 +154,72 @@ namespace metadataGenerator
                             new XElement(gmd + "metadataStandardName",
                                 new XElement(gco+ "CharacterString" , "ISO19115"
                                 )
+                            ),
+                             new XElement(gmd + "metadataStandardVersion",
+                                new XElement(gco + "CharacterString", "2003/Cor.1:2006"
+                                )
+                            ),
+                            new XElement(gmd + "identificationInfo",
+                                new XElement(gmd + "MD_DataIdentification",
+                                    new XElement(gmd + "citation",
+                                        new XElement(gmd + "CI_Citation",
+                                            new XElement(gmd + "title", new XElement(gco + "CharacterString")), // katman adı eklenecek
+                                            new XElement(gmd + "date",
+                                                new XElement(gmd + "CI_Date",
+                                                    new XElement(gmd + "date", new XElement(gco + "Date")), //tarih eklenecek
+                                                    new XElement(gmd + "dateType",
+                                                        new XElement(gmd + "CI_DateTypeCode",
+                                                            new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode"),
+                                                            new XAttribute("codeListValue", "publication"), "publication"
+                                                        )
+                                                    )
+                                                )
+                                            ),
+                                              new XElement(gmd + "date",
+                                                new XElement(gmd + "CI_Date",
+                                                    new XElement(gmd + "date", new XElement(gco + "Date")), //tarih eklenecek
+                                                    new XElement(gmd + "dateType",
+                                                        new XElement(gmd + "CI_DateTypeCode",
+                                                            new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode"),
+                                                            new XAttribute("codeListValue", "creation"), "creation"
+                                                        )
+                                                    )
+                                                )
+                                            ),
+                                              new XElement(gmd + "date",
+                                                new XElement(gmd + "CI_Date",
+                                                    new XElement(gmd + "date", new XElement(gco + "Date")), //tarih eklenecek
+                                                    new XElement(gmd + "dateType",
+                                                        new XElement(gmd + "CI_DateTypeCode",
+                                                            new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode"),
+                                                            new XAttribute("codeListValue", "revision"), "revision"
+                                                        )
+                                                    )
+                                                )
+                                            ),
+                                            new XElement(gmd + "identifier",
+                                                new XElement (gmd + "RS_Identifier",
+                                                    new XElement (gmd + "code",
+                                                        new XElement (gco + "CharacterString")
+                                                    ),
+                                                    new XElement(gmd + "codeSpace",
+                                                        new XElement(gco + "CharacterString")
+                                                    )
+                                                )
+                                            )
+
+                                        )
+                                    ),
+                                    new XElement(gmd + "abstract",
+                                        new XElement(gco + "CharacterString")
+                                    )
+                                    
+                                )
                             )
 
 
-                            ));
+                        )
+                        );
                     xdoc.Save(metaDataFolder+"\\"+fileName+".xml");
                 }
                 catch (Exception e)
