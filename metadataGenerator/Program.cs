@@ -39,6 +39,9 @@ namespace metadataGenerator
                     //fetch data from dt by SQL column names
                     string rowId = row["OBJECTID"].ToString();
                     string responsibleEmail = row["USER_MODIFY_N"].ToString();
+                    string sit_adi = row["ADI"].ToString();
+
+
                     //bounding box conversions
                     BoundingBox Bbox = new BoundingBox(
                         Convert.ToDouble(row["CLLY"]), 
@@ -51,8 +54,11 @@ namespace metadataGenerator
                     string southBoundLatitude = Bbox.SBL.ToString();
                     string northBoundLatitude = Bbox.NBL.ToString();
 
-                    createMetaData(rowId, responsibleEmail);
+                    createMetaData(rowId, responsibleEmail, sit_adi);
                     spin.Turn();
+
+                    
+                    
                 }
 
             }
@@ -65,15 +71,17 @@ namespace metadataGenerator
                 Console.Write("\r Tamamlandı!");
                 logger.createLog("İşlem Başarıyla Tamamlandı", "s");
             }
-          
-            void createMetaData(string oid, string responsibleEmail)
+
+
+
+            void createMetaData(string oid, string responsibleEmail, string sit_adi)
             {
                 try
                 {
                     //from db variables
                     string fileName = oid + "_KA_SIT";
                     string dataResponsibleEmail = responsibleEmail;
-
+                    
 
                     //calculated variables
                     string metadataDate = DateTime.Now.ToString("yyyy-MM-dd");
@@ -113,7 +121,7 @@ namespace metadataGenerator
                                     new XAttribute("codeListValue", "tur"), "tur")
                                 ),
                             new XElement(gmd + "characterSet",
-                                new XElement(gmd + "MD_CharacterSetCode",
+                                new XElement(gmd + "MD_CharacterSetCode", 
                                     new XAttribute("codeSpace", "ISOTC211/19115"),
                                     new XAttribute("codeList", "http://www.isotc211.org/2005/resources/codelist/gmxCodelists.xml#MD_CharacterSetCode"),
                                     new XAttribute("codeListValue", "MD_CharacterSetCode_utf8"), "MD_CharacterSetCode_utf8")
@@ -163,7 +171,7 @@ namespace metadataGenerator
                                 new XElement(gmd + "MD_DataIdentification",
                                     new XElement(gmd + "citation",
                                         new XElement(gmd + "CI_Citation",
-                                            new XElement(gmd + "title", new XElement(gco + "CharacterString")), // katman adı eklenecek
+                                            new XElement(gmd + "title", new XElement(gco + "CharacterString", sit_adi)), // katman adı eklenecek
                                             new XElement(gmd + "date",
                                                 new XElement(gmd + "CI_Date",
                                                     new XElement(gmd + "date", new XElement(gco + "Date")), //tarih eklenecek
@@ -211,8 +219,32 @@ namespace metadataGenerator
                                         )
                                     ),
                                     new XElement(gmd + "abstract",
-                                        new XElement(gco + "CharacterString")
+                                        new XElement(gco + "CharacterString") //abstract eklenecek
+                                    ),
+                                    new XElement(gmd + "pointOfContact",
+                                        new XElement(gmd + "CI_ResponsibleParty",
+                                            new XElement(gmd + "organisationName", new XElement (gco + "CharacterString")), //kurum adı eklenecek
+                                            new XElement(gmd + "contactInfo",
+                                                new XElement(gmd + "CI_Contact",
+                                                    new XElement(gmd + "address",
+                                                        new XElement(gmd + "CI_Address",
+                                                            new XElement(gmd + "electronicMailAddress", new XElement(gco + "CharacterString")), //mail adresi eklenecek
+                                                            new XElement(gmd + "electronicMailAddress", new XElement(gco + "CharacterString")), //mail adresi eklenecek
+                                                            new XElement(gmd + "electronicMailAddress", new XElement(gco + "CharacterString")) //mail adresi eklenecek
+                                                        )
+                                                    )
+                                                )
+                                            ),
+                                            new XElement(gmd + "role",
+                                                new XElement(gmd + "CI_RoleCode",
+                                                    new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_RoleCode"),
+                                                    new XAttribute("codeListValue", "author"), "author"
+                                                )
+                                            )
+                                            
+                                        )
                                     )
+                                    
                                     
                                 )
                             )
