@@ -31,7 +31,7 @@ namespace metadataGenerator
             Console.Write("Tamamlanıyor....");
             try //main code block
             {
-                DataTable table =  SqlConnection.ShowDataInGridView("SELECT top 50 * FROM "+metaTableName+" WHERE "+tableCriteria);
+                DataTable table =  SqlConnection.ShowDataInGridView("SELECT top 60 * FROM "+metaTableName+" WHERE "+tableCriteria);
                 int totalRows = table.Rows.Count;
                 logger.createLog(metaTableName + "\n\t" + tableCriteria + "\n\t" + totalRows + "- Veri Sayısı", "i");
                 foreach (DataRow row in table.Rows)
@@ -40,6 +40,7 @@ namespace metadataGenerator
                     string rowId = row["OBJECTID"].ToString();
                     string responsibleEmail = row["USER_MODIFY_N"].ToString();
                     string sit_adi = row["ADI"].ToString();
+                    string genel_tanim = row["GENEL_TANIM"].ToString();
 
 
                     //bounding box conversions
@@ -54,7 +55,7 @@ namespace metadataGenerator
                     string southBoundLatitude = Bbox.SBL.ToString();
                     string northBoundLatitude = Bbox.NBL.ToString();
 
-                    createMetaData(rowId, responsibleEmail, sit_adi);
+                    createMetaData(rowId, responsibleEmail, sit_adi, genel_tanim, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude);
                     spin.Turn();
 
                     
@@ -74,7 +75,7 @@ namespace metadataGenerator
 
 
 
-            void createMetaData(string oid, string responsibleEmail, string sit_adi)
+            void createMetaData(string oid, string responsibleEmail, string sit_adi, string genel_tanim, string westBoundLongitude, string eastBoundLongitude, string southBoundLatitude, string northBoundLatitude)
             {
                 try
                 {
@@ -103,11 +104,11 @@ namespace metadataGenerator
                             new XAttribute(XNamespace.Xmlns + "gml", gml),
                             new XAttribute(XNamespace.Xmlns + "xlink", xlink),
                             new XAttribute(xsi + "schemaLocation", schemaLocation),
-                            new XElement(gmd+"fileIdentifier",
-                                new XElement(gmd+"CharacterString", fileName+".xml")
+                            new XElement(gmd + "fileIdentifier",
+                                new XElement(gmd + "CharacterString", fileName + ".xml")
                                 ),
-                            new XElement(gmd+"wfsRole", 
-                                new XElement(gco+"CharacterString")
+                            new XElement(gmd + "wfsRole",
+                                new XElement(gco + "CharacterString")
                                 ),
                             new XElement(gmd + "organizationLogoUrl",
                                 new XElement(gco + "CharacterString")
@@ -117,11 +118,11 @@ namespace metadataGenerator
                                 ),
                             new XElement(gmd + "language",
                                 new XElement(gmd + "LanguageCode",
-                                    new XAttribute("codeList", "http://www.loc.gov/standards/iso639-2/"), 
+                                    new XAttribute("codeList", "http://www.loc.gov/standards/iso639-2/"),
                                     new XAttribute("codeListValue", "tur"), "tur")
                                 ),
                             new XElement(gmd + "characterSet",
-                                new XElement(gmd + "MD_CharacterSetCode", 
+                                new XElement(gmd + "MD_CharacterSetCode",
                                     new XAttribute("codeSpace", "ISOTC211/19115"),
                                     new XAttribute("codeList", "http://www.isotc211.org/2005/resources/codelist/gmxCodelists.xml#MD_CharacterSetCode"),
                                     new XAttribute("codeListValue", "MD_CharacterSetCode_utf8"), "MD_CharacterSetCode_utf8")
@@ -133,7 +134,7 @@ namespace metadataGenerator
                                 ),
                             new XElement(gmd + "contact",
                                 new XElement(gmd + "CI_ResponsibleParty",
-                                    new XElement(gmd + "organisationName", 
+                                    new XElement(gmd + "organisationName",
                                         new XElement(gco + "CharacterString", organizationName),
                                     new XElement(gmd + "contactInfo",
                                         new XElement(gmd + "CI_Contact",
@@ -156,11 +157,11 @@ namespace metadataGenerator
                                 )
                             )
                         ),
-                            new XElement(gmd+"dateStamp",
-                                new XElement(gco+"Date", metadataDate)
-                            ), 
+                            new XElement(gmd + "dateStamp",
+                                new XElement(gco + "Date", metadataDate)
+                            ),
                             new XElement(gmd + "metadataStandardName",
-                                new XElement(gco+ "CharacterString" , "ISO19115"
+                                new XElement(gco + "CharacterString", "ISO19115"
                                 )
                             ),
                              new XElement(gmd + "metadataStandardVersion",
@@ -171,10 +172,13 @@ namespace metadataGenerator
                                 new XElement(gmd + "MD_DataIdentification",
                                     new XElement(gmd + "citation",
                                         new XElement(gmd + "CI_Citation",
-                                            new XElement(gmd + "title", new XElement(gco + "CharacterString", sit_adi)), // katman adı eklenecek
+
+                                            // name of the unit
+                                            new XElement(gmd + "title", new XElement(gco + "CharacterString", sit_adi)),
+
                                             new XElement(gmd + "date",
                                                 new XElement(gmd + "CI_Date",
-                                                    new XElement(gmd + "date", new XElement(gco + "Date")), //tarih eklenecek
+                                                    new XElement(gmd + "date", new XElement(gco + "Date")), //date must be added
                                                     new XElement(gmd + "dateType",
                                                         new XElement(gmd + "CI_DateTypeCode",
                                                             new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode"),
@@ -185,7 +189,7 @@ namespace metadataGenerator
                                             ),
                                               new XElement(gmd + "date",
                                                 new XElement(gmd + "CI_Date",
-                                                    new XElement(gmd + "date", new XElement(gco + "Date")), //tarih eklenecek
+                                                    new XElement(gmd + "date", new XElement(gco + "Date")), //date must be added
                                                     new XElement(gmd + "dateType",
                                                         new XElement(gmd + "CI_DateTypeCode",
                                                             new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode"),
@@ -196,7 +200,7 @@ namespace metadataGenerator
                                             ),
                                               new XElement(gmd + "date",
                                                 new XElement(gmd + "CI_Date",
-                                                    new XElement(gmd + "date", new XElement(gco + "Date")), //tarih eklenecek
+                                                    new XElement(gmd + "date", new XElement(gco + "Date")), //date must be added
                                                     new XElement(gmd + "dateType",
                                                         new XElement(gmd + "CI_DateTypeCode",
                                                             new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode"),
@@ -206,9 +210,9 @@ namespace metadataGenerator
                                                 )
                                             ),
                                             new XElement(gmd + "identifier",
-                                                new XElement (gmd + "RS_Identifier",
-                                                    new XElement (gmd + "code",
-                                                        new XElement (gco + "CharacterString")
+                                                new XElement(gmd + "RS_Identifier",
+                                                    new XElement(gmd + "code",
+                                                        new XElement(gco + "CharacterString")
                                                     ),
                                                     new XElement(gmd + "codeSpace",
                                                         new XElement(gco + "CharacterString")
@@ -218,19 +222,20 @@ namespace metadataGenerator
 
                                         )
                                     ),
+
+                                    // abstract of the unit
                                     new XElement(gmd + "abstract",
-                                        new XElement(gco + "CharacterString") //abstract eklenecek
+                                        new XElement(gco + "CharacterString", genel_tanim)
                                     ),
                                     new XElement(gmd + "pointOfContact",
                                         new XElement(gmd + "CI_ResponsibleParty",
-                                            new XElement(gmd + "organisationName", new XElement (gco + "CharacterString")), //kurum adı eklenecek
+                                            new XElement(gmd + "organisationName", new XElement(gco + "CharacterString", organizationName)),
                                             new XElement(gmd + "contactInfo",
                                                 new XElement(gmd + "CI_Contact",
                                                     new XElement(gmd + "address",
                                                         new XElement(gmd + "CI_Address",
-                                                            new XElement(gmd + "electronicMailAddress", new XElement(gco + "CharacterString")), //mail adresi eklenecek
-                                                            new XElement(gmd + "electronicMailAddress", new XElement(gco + "CharacterString")), //mail adresi eklenecek
-                                                            new XElement(gmd + "electronicMailAddress", new XElement(gco + "CharacterString")) //mail adresi eklenecek
+                                                            new XElement(gmd + "electronicMailAddress", new XElement(gco + "CharacterString", organizationEmail)),
+                                                            new XElement(gmd + "electronicMailAddress", new XElement(gco + "CharacterString", responsibleEmail))
                                                         )
                                                     )
                                                 )
@@ -241,17 +246,169 @@ namespace metadataGenerator
                                                     new XAttribute("codeListValue", "author"), "author"
                                                 )
                                             )
-                                            
+
+                                        )
+                                    ),
+
+                                    // need to be arraged for multivalues
+                                    new XElement(gmd + "descriptiveKeywords",
+                                        new XElement(gmd + "MD_Keywords",
+                                            new XElement(gmd + "keyword", new XElement(gco + "CharacterString")),
+                                            new XElement(gmd + "thesaurusName",
+                                                new XElement(gmd + "CI_Citation",
+                                                    new XElement(gmd + "title", new XElement(gco + "CharacterString")),
+                                                    new XElement(gmd + "date",
+                                                        new XElement(gmd + "CI_Date",
+                                                            new XElement(gmd + "date", new XElement(gco + "Date")),
+                                                            new XElement(gmd + "dateType",
+                                                                new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode"),
+                                                                new XAttribute("codeListValue", "creation"), "creation"
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    ),
+
+                                    // text content may be revised
+                                    new XElement(gmd + "resourceConstraints",
+                                        new XElement(gmd + "MD_Constraints",
+                                            new XElement(gmd + "useLimitation", new XElement(gco + "CharacterString",
+                                            "Bilgi Amaçlıdır. Resmi İşlemlerde Kullanılamaz. Veriler çoğaltılarak hiçbir şekilde üçüncü şahıslara kullandırılamaz ve yayınlanamaz. Verilerin amaç dışında ve ticari amaçla kullanıldığının tespit edilmesi halinde ilgililer hakkında hukuki işlemler başlatılacaktır.")
+                                            )
+                                        )
+                                    ),
+
+                                    // text content may be revised
+                                    new XElement(gmd + "resourceConstraints",
+                                        new XElement(gmd + "MD_LegalConstraints",
+                                            new XElement(gmd + "accessConstraints",
+                                                new XElement(gmd + "MD_RestrictionCode",
+                                                    new XAttribute("codeListValue", "otherRestrictions"), "otherRestrictions",
+                                                    new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#MD_RestrictionCode")
+                                                )
+                                            ),
+                                            new XElement(gmd + "otherConstraints",
+                                                new XElement(gco + "CharacterString",
+                                                "Bilgi Amaçlıdır. Resmi İşlemlerde Kullanılamaz. Veriler çoğaltılarak hiçbir şekilde üçüncü şahıslara kullandırılamaz ve yayınlanamaz. Verilerin amaç dışında ve ticari amaçla kullanıldığının tespit edilmesi halinde ilgililer hakkında hukuki işlemler başlatılacaktır.")
+                                            )
+                                        )
+                                    ),
+                                    new XElement(gmd + "language",
+                                        new XElement(gmd + "LanguageCode",
+                                            new XAttribute("codeList", "http://www.loc.gov/standards/iso639-2/"),
+                                            new XAttribute("codeListValue", "tur"), "tur")
+                                    ),
+
+                                    // needed to be decide topic category
+                                    new XElement(gmd + "topicCategory",
+                                        new XElement(gmd + "MD_TopicCategoryCode", "SIT") //topic may be involved to app.config
+                                    ),
+
+                                    new XElement(gmd + "extent",
+                                        new XElement(gmd + "EX_Extent",
+                                            new XElement(gmd + "geographicElement",
+                                                new XElement(gmd + "EX_GeographicBoundingBox",
+                                                    new XElement(gmd + "westBoundLongitude", new XElement(gco + "Decimal", westBoundLongitude)),
+                                                    new XElement(gmd + "eastBoundLongitude", new XElement(gco + "Decimal", eastBoundLongitude)),
+                                                    new XElement(gmd + "southBoundLongitude", new XElement(gco + "Decimal", southBoundLatitude)),
+                                                    new XElement(gmd + "northBoundLongitude", new XElement(gco + "Decimal", northBoundLatitude))
+                                                )
+                                            ),
+                                                    new XElement(gmd + "temporalElement",
+                                                        new XElement(gmd + "EX_TemporalExtent",
+                                                            new XElement(gmd + "extent",
+                                                                new XElement(gml + "TimePeriod",
+                                                                    new XAttribute(gml + "id", "IDc1161bd1-d59a-4641-b0a5-c60fff77476b"), //id must be corrected
+                                                                    new XAttribute(xsi + "type", "gml:TimePeriodType"),
+                                                                    new XElement(gml + "beginPosition"), //beginning time must be added
+                                                                    new XElement(gml + "endPosition") //ending time must be added
+                                                                )
+                                                            )
+                                                        )
+                                                    )
+
+
+                                         )
+                                    )
+
+                                )
+                            ),
+                            new XElement(gmd + "distributionInfo",
+                                new XElement(gmd + "MD_Distribution",
+                                    new XElement(gmd + "distributionFormat",
+                                        new XElement(gmd + "MD_Format",
+                                            new XElement(gmd + "name", new XElement(gco + "CharacterString")),  //name must be added
+                                            new XElement(gmd + "version", new XElement(gco + "CharacterString"))    //version must be adde
+                                        )
+                                    ),
+                                    new XElement(gmd + "transferOptions",
+                                        new XElement(gmd + "MD_DigitalTransferOptions",
+                                            new XElement(gmd + "onLine",
+                                                new XElement(gmd + "CI_OnlineResource",
+                                                    new XElement(gmd + "linkage",
+                                                        new XElement(gmd + "URL")   //link must be added
+                                                    )
+                                                )
+                                            )
                                         )
                                     )
-                                    
-                                    
+                                )
+                            ),
+                            new XElement(gmd + "dataQualityInfo",
+                                new XElement(gmd + "DQ_DataQuality",
+                                    new XElement(gmd + "scope",
+                                        new XElement(gmd + "DQ_Scope",
+                                            new XElement(gmd + "level",
+                                                new XElement(gmd + "MD_ScopeCode",
+                                                    new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#MD_ScopeCode"),
+                                                    new XAttribute("codeListValue", "dataset"),"dataset" //what if it's not dataset
+                                                )
+                                            )
+                                        )
+                                    ),
+                                    new XElement(gmd + "report",
+                                        new XElement(gmd + "DQ_DomainConsistency",
+                                            new XAttribute(xsi +"type", "gmd:DQ_DomainConsistency_Type"),
+                                            new XElement(gmd + "result",
+                                               new XElement(gmd + "DQ_ConformanceResult",
+                                                   new XAttribute(xsi + "type", "gmd:DQ_ConformanceResult"),
+                                                   new XElement(gmd + "specification",
+                                                       new XElement(gmd + "CI_Citation",
+                                                           new XElement(gmd + "title", new XElement(gco + "CharacterString")),
+                                                           new XElement(gmd + "date",
+                                                               new XElement(gmd + "CI_Date",
+                                                                   new XElement(gmd + "date", new XElement(gco + "Date")),
+                                                                       new XElement(gmd + "dateType",
+                                                                            new XElement(gmd + "CI_DateTypeCode",
+                                                                                new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode"),
+                                                                                new XAttribute("codeListValue", "publication"), "publication"
+                                                                            )
+                                                                        )
+                                                               )
+                                                           )
+                                                       )
+                                                   ),
+                                                   new XElement(gmd + "explanation", new XElement(gco + "CharacterString", "See the referenced specification")),
+                                                   new XElement(gmd + "pass", new XElement(gco + "Boolean", "true"))
+                                               ) 
+                                            )
+                                        )
+                                    ),
+                                    new XElement(gmd + "lineage",
+                                        new XElement(gmd + "LI_Lineage",
+                                            new XElement(gmd + "statement", new XElement(gco + "CharacterString") //
+                                            )
+                                        )
+                                    )
                                 )
                             )
 
 
                         )
-                        );
+                    );
+
                     xdoc.Save(metaDataFolder+"\\"+fileName+".xml");
                 }
                 catch (Exception e)
