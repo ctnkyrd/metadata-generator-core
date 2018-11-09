@@ -26,18 +26,19 @@ namespace metadataGenerator
             string organizationEmail = ConfigurationManager.AppSettings["organizationEmail"];
             string organizationName = ConfigurationManager.AppSettings["organizationName"];
             string metaDataFolder = ConfigurationManager.AppSettings["metaDataFolder"];
+            string guidColumnName = ConfigurationManager.AppSettings["guidColumn"];
 
             var spin = new ConsoleSpinner();
             Console.Write("Tamamlanıyor....");
             try //main code block
             {
-                DataTable table =  SqlConnection.ShowDataInGridView("SELECT top 60 * FROM "+metaTableName+" WHERE "+tableCriteria);
+                DataTable table =  SqlConnection.ShowDataInGridView("SELECT top 10 * FROM "+metaTableName+" WHERE "+tableCriteria);
                 int totalRows = table.Rows.Count;
                 logger.createLog(metaTableName + "\n\t" + tableCriteria + "\n\t" + totalRows + "- Veri Sayısı", "i");
                 foreach (DataRow row in table.Rows)
                 {
                     //fetch data from dt by SQL column names
-                    string rowId = row["OBJECTID"].ToString();
+                    string rowId = row[guidColumnName].ToString();
                     string responsibleEmail = row["USER_MODIFY_N"].ToString();
                     string sit_adi = row["ADI"].ToString();
                     string genel_tanim = row["GENEL_TANIM"].ToString();
@@ -80,7 +81,7 @@ namespace metadataGenerator
                 try
                 {
                     //from db variables
-                    string fileName = oid + "_KA_SIT";
+                    string fileName = oid;
                     string dataResponsibleEmail = responsibleEmail;
                     
 
