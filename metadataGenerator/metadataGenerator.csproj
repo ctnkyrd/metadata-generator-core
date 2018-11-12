@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="ConnectionSQL.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Metadata.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

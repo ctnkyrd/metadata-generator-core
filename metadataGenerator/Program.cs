@@ -58,8 +58,14 @@ namespace metadataGenerator
                     string northBoundLatitude = Bbox.NBL.ToString();
 
                     //createMetaData keywords
-                    List<string> keywordsColumnNames = new List<string>(ConfigurationManager.AppSettings["keywords"].Split(new char[] { ';' }));
-
+                    List<string> keywordsColumnNames = new List<string>();
+                    //List<string> settingsKeywords = new List<string>(ConfigurationManager.AppSettings["keywords"].Split(new char[] { ';' }));
+                    
+                    foreach (string kw in (ConfigurationManager.AppSettings["keywords"].Split(new char[] { ';' })))
+                    {
+                        if (row[kw].ToString() != "" || row[kw].ToString() != null)
+                            keywordsColumnNames.Add(row[kw].ToString());
+                    }
 
                     Metadata.createMetaData(rowId, responsibleEmail, sit_adi, genel_tanim, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
                                             keywordsColumnNames, organizationName, organizationEmail, metaDataFolder);
