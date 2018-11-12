@@ -21,7 +21,6 @@ namespace metadataGenerator
                 string fileName = oid;
                 string dataResponsibleEmail = responsibleEmail;
 
-
                 //calculated variables
                 string metadataDate = DateTime.Now.ToString("yyyy-MM-dd");
 
@@ -268,11 +267,8 @@ namespace metadataGenerator
                                                         )
                                                     )
                                                 )
-
-
                                      )
                                 )
-
                             )
                         ),
                         new XElement(gmd + "distributionInfo",
