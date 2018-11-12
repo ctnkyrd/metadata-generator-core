@@ -56,7 +56,15 @@ namespace metadataGenerator
                     string southBoundLatitude = Bbox.SBL.ToString();
                     string northBoundLatitude = Bbox.NBL.ToString();
 
-                    createMetaData(rowId, responsibleEmail, sit_adi, genel_tanim, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude);
+                    //createMetaData keywords
+                    List<string> keywordsColumnNames = new List<string>();
+                    keywordsColumnNames.Add(row["ADI"].ToString());
+                    keywordsColumnNames.Add("ANKARA");
+
+
+                    createMetaData(rowId, responsibleEmail, sit_adi, genel_tanim, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
+                                    keywordsColumnNames);
+                    //for visual satisfaction :)
                     spin.Turn();
 
                     
@@ -76,7 +84,8 @@ namespace metadataGenerator
 
 
 
-            void createMetaData(string oid, string responsibleEmail, string sit_adi, string genel_tanim, string westBoundLongitude, string eastBoundLongitude, string southBoundLatitude, string northBoundLatitude)
+            void createMetaData(string oid, string responsibleEmail, string sit_adi, string genel_tanim, string westBoundLongitude, 
+                                string eastBoundLongitude, string southBoundLatitude, string northBoundLatitude, List<string> keywords)
             {
                 try
                 {
@@ -251,11 +260,12 @@ namespace metadataGenerator
                                         )
                                     ),
 
-                                    // need to be arraged for multivalues
+                                    // need to be arraged for multivalues keywords
                                     new XElement(gmd + "descriptiveKeywords",
                                         new XElement(gmd + "MD_Keywords",
-                                            new XElement(gmd + "keyword", new XElement(gco + "CharacterString")),
-                                            new XElement(gmd + "thesaurusName",
+                                            from kw in keywords 
+                                            select new XElement(gmd + "keyword", new XElement(gco + "CharacterString", kw)),                                    
+                                                new XElement(gmd + "thesaurusName",
                                                 new XElement(gmd + "CI_Citation",
                                                     new XElement(gmd + "title", new XElement(gco + "CharacterString")),
                                                     new XElement(gmd + "date",
