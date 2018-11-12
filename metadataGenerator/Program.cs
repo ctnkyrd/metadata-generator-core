@@ -28,6 +28,7 @@ namespace metadataGenerator
             string organizationName = ConfigurationManager.AppSettings["organizationName"];
             string metaDataFolder = ConfigurationManager.AppSettings["metaDataFolder"];
             string guidColumnName = ConfigurationManager.AppSettings["guidColumn"];
+            string topicCategory = ConfigurationManager.AppSettings["topicCategory"];
 
             var spin = new ConsoleSpinner();
             Console.Write("Tamamlanıyor....");
@@ -59,7 +60,6 @@ namespace metadataGenerator
 
                     //createMetaData keywords
                     List<string> keywordsColumnNames = new List<string>();
-                    //List<string> settingsKeywords = new List<string>(ConfigurationManager.AppSettings["keywords"].Split(new char[] { ';' }));
                     
                     foreach (string kw in (ConfigurationManager.AppSettings["keywords"].Split(new char[] { ';' })))
                     {
@@ -67,8 +67,15 @@ namespace metadataGenerator
                             keywordsColumnNames.Add(row[kw].ToString());
                     }
 
+                    //online resources wms,wfs
+                    List<string> onlineSources = new List<string>();
+                    foreach (string os in (ConfigurationManager.AppSettings["onlineSources"].Split(new char[] { ';' })))
+                    {
+                        onlineSources.Add(os);
+                    }
+
                     Metadata.createMetaData(rowId, responsibleEmail, sit_adi, genel_tanim, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
-                                            keywordsColumnNames, organizationName, organizationEmail, metaDataFolder);
+                                            keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources);
                     //for visual satisfaction :)
                     spin.Turn();
 

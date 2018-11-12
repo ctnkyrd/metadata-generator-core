@@ -13,7 +13,7 @@ namespace metadataGenerator
         Logger Logger = new Logger();
         public void createMetaData(string oid, string responsibleEmail, string sit_adi, string genel_tanim, string westBoundLongitude,
                                 string eastBoundLongitude, string southBoundLatitude, string northBoundLatitude, List<string> keywords, string organizationName, 
-                                string organizationEmail, string metaDataFolder)
+                                string organizationEmail, string metaDataFolder, string topicCategory, List<string> onlineResources)
         {
             try
             {
@@ -188,9 +188,10 @@ namespace metadataGenerator
                                     )
                                 ),
 
-                                // need to be arraged for multivalues keywords
+                                //keywords
                                 new XElement(gmd + "descriptiveKeywords",
                                     new XElement(gmd + "MD_Keywords",
+                                        //for multiple keyword arrangement
                                         from kw in keywords
                                         select new XElement(gmd + "keyword", new XElement(gco + "CharacterString", kw)),
                                             new XElement(gmd + "thesaurusName",
@@ -242,7 +243,7 @@ namespace metadataGenerator
 
                                 // needed to be decide topic category
                                 new XElement(gmd + "topicCategory",
-                                    new XElement(gmd + "MD_TopicCategoryCode", "SIT") //topic may be involved to app.config
+                                    new XElement(gmd + "MD_TopicCategoryCode", topicCategory) //topic may be involved to app.config
                                 ),
 
                                 new XElement(gmd + "extent",
@@ -284,10 +285,12 @@ namespace metadataGenerator
                                 ),
                                 new XElement(gmd + "transferOptions",
                                     new XElement(gmd + "MD_DigitalTransferOptions",
-                                        new XElement(gmd + "onLine",
+                                    //wms wfs servis ekleme
+                                     from os in onlineResources
+                                     select new XElement(gmd + "onLine",
                                             new XElement(gmd + "CI_OnlineResource",
                                                 new XElement(gmd + "linkage",
-                                                    new XElement(gmd + "URL")   //link must be added
+                                                    new XElement(gmd + "URL", os) 
                                                 )
                                             )
                                         )
@@ -337,7 +340,7 @@ namespace metadataGenerator
                                 ),
                                 new XElement(gmd + "lineage",
                                     new XElement(gmd + "LI_Lineage",
-                                        new XElement(gmd + "statement", new XElement(gco + "CharacterString") //
+                                        new XElement(gmd + "statement", new XElement(gco + "CharacterString")
                                         )
                                     )
                                 )
