@@ -42,11 +42,11 @@ namespace metadataGenerator
                         new XAttribute(XNamespace.Xmlns + "xlink", xlink),
                         new XAttribute(xsi + "schemaLocation", schemaLocation),
                         new XElement(gmd + "fileIdentifier",
-                            new XElement(gmd + "CharacterString", fileName + ".xml")
+                            new XElement(gco + "CharacterString", fileName + ".xml")
                             ),
-                        new XElement(gmd + "wfsRole",
-                            new XElement(gco + "CharacterString")
-                            ),
+                        //new XElement(gmd + "wfsRole",
+                        //    new XElement(gco + "CharacterString")
+                        //    ),
                         new XElement(gmd + "organizationLogoUrl",
                             new XElement(gco + "CharacterString")
                             ),
@@ -72,7 +72,7 @@ namespace metadataGenerator
                         new XElement(gmd + "contact",
                             new XElement(gmd + "CI_ResponsibleParty",
                                 new XElement(gmd + "organisationName",
-                                    new XElement(gco + "CharacterString", organizationName),
+                                    new XElement(gco + "CharacterString", organizationName)),
                                 new XElement(gmd + "contactInfo",
                                     new XElement(gmd + "CI_Contact",
                                         new XElement(gmd + "address",
@@ -91,7 +91,7 @@ namespace metadataGenerator
                                     )
                                 )
 
-                            )
+                            
                         )
                     ),
                         new XElement(gmd + "dateStamp",
@@ -145,17 +145,17 @@ namespace metadataGenerator
                                                     )
                                                 )
                                             )
-                                        ),
-                                        new XElement(gmd + "identifier",
-                                            new XElement(gmd + "RS_Identifier",
-                                                new XElement(gmd + "code",
-                                                    new XElement(gco + "CharacterString")
-                                                ),
-                                                new XElement(gmd + "codeSpace",
-                                                    new XElement(gco + "CharacterString")
-                                                )
-                                            )
                                         )
+                                        //new XElement(gmd + "identifier",
+                                        //    new XElement(gmd + "RS_Identifier",
+                                        //        new XElement(gmd + "code",
+                                        //            new XElement(gco + "CharacterString")
+                                        //        ),
+                                        //        new XElement(gmd + "codeSpace",
+                                        //            new XElement(gco + "CharacterString")
+                                        //        )
+                                        //    )
+                                        //)
 
                                     )
                                 ),
@@ -195,13 +195,15 @@ namespace metadataGenerator
                                         select new XElement(gmd + "keyword", new XElement(gco + "CharacterString", kw)),
                                             new XElement(gmd + "thesaurusName",
                                             new XElement(gmd + "CI_Citation",
-                                                new XElement(gmd + "title", new XElement(gco + "CharacterString")),
+                                                new XElement(gmd + "title", new XElement(gco + "CharacterString", "TUCBS")),
                                                 new XElement(gmd + "date",
                                                     new XElement(gmd + "CI_Date",
-                                                        new XElement(gmd + "date", new XElement(gco + "Date")),
+                                                        new XElement(gmd + "date", new XElement(gco + "Date", metadataDate)),
                                                         new XElement(gmd + "dateType",
+                                                            new XElement(gmd+"CI_DateTypeCode",
                                                             new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode"),
-                                                            new XAttribute("codeListValue", "creation"), "creation"
+                                                            new XAttribute("codeListValue", "revision"), "revision"
+                                                            )
                                                         )
                                                     )
                                                 )
@@ -251,22 +253,22 @@ namespace metadataGenerator
                                             new XElement(gmd + "EX_GeographicBoundingBox",
                                                 new XElement(gmd + "westBoundLongitude", new XElement(gco + "Decimal", westBoundLongitude)),
                                                 new XElement(gmd + "eastBoundLongitude", new XElement(gco + "Decimal", eastBoundLongitude)),
-                                                new XElement(gmd + "southBoundLongitude", new XElement(gco + "Decimal", southBoundLatitude)),
-                                                new XElement(gmd + "northBoundLongitude", new XElement(gco + "Decimal", northBoundLatitude))
+                                                new XElement(gmd + "southBoundLatitude", new XElement(gco + "Decimal", southBoundLatitude)),
+                                                new XElement(gmd + "northBoundLatitude", new XElement(gco + "Decimal", northBoundLatitude))
                                             )
-                                        ),
-                                                new XElement(gmd + "temporalElement",
-                                                    new XElement(gmd + "EX_TemporalExtent",
-                                                        new XElement(gmd + "extent",
-                                                            new XElement(gml + "TimePeriod",
-                                                                new XAttribute(gml + "id", "IDc1161bd1-d59a-4641-b0a5-c60fff77476b"), //id must be corrected
-                                                                new XAttribute(xsi + "type", "gml:TimePeriodType"),
-                                                                new XElement(gml + "beginPosition"), //beginning time must be added
-                                                                new XElement(gml + "endPosition") //ending time must be added
-                                                            )
-                                                        )
-                                                    )
-                                                )
+                                        )
+                                                //new XElement(gmd + "temporalElement",
+                                                //    new XElement(gmd + "EX_TemporalExtent",
+                                                //        new XElement(gmd + "extent",
+                                                //            new XElement(gml + "TimePeriod",
+                                                //                new XAttribute(gml + "id", "IDc1161bd1-d59a-4641-b0a5-c60fff77476b"), //id must be corrected
+                                                //                new XAttribute(xsi + "type", "gml:TimePeriodType"),
+                                                //                new XElement(gml + "beginPosition"), //beginning time must be added
+                                                //                new XElement(gml + "endPosition") //ending time must be added
+                                                //            )
+                                                //        )
+                                                //    )
+                                                //)
                                      )
                                 )
                             )
@@ -275,8 +277,8 @@ namespace metadataGenerator
                             new XElement(gmd + "MD_Distribution",
                                 new XElement(gmd + "distributionFormat",
                                     new XElement(gmd + "MD_Format",
-                                        new XElement(gmd + "name", new XElement(gco + "CharacterString")),  //name must be added
-                                        new XElement(gmd + "version", new XElement(gco + "CharacterString"))    //version must be adde
+                                        new XElement(gmd + "name", new XElement(gco + "CharacterString", "unknown")),  //name must be added
+                                        new XElement(gmd + "version", new XElement(gco + "CharacterString", "unknown"))    //version must be adde
                                     )
                                 ),
                                 new XElement(gmd + "transferOptions",
@@ -311,13 +313,13 @@ namespace metadataGenerator
                                         new XAttribute(xsi + "type", "gmd:DQ_DomainConsistency_Type"),
                                         new XElement(gmd + "result",
                                            new XElement(gmd + "DQ_ConformanceResult",
-                                               new XAttribute(xsi + "type", "gmd:DQ_ConformanceResult"),
+                                               new XAttribute(xsi + "type", "gmd:DQ_ConformanceResult_Type"),
                                                new XElement(gmd + "specification",
                                                    new XElement(gmd + "CI_Citation",
-                                                       new XElement(gmd + "title", new XElement(gco + "CharacterString")),
+                                                       new XElement(gmd + "title", new XElement(gco + "CharacterString", topicCategory)),
                                                        new XElement(gmd + "date",
                                                            new XElement(gmd + "CI_Date",
-                                                               new XElement(gmd + "date", new XElement(gco + "Date")),
+                                                               new XElement(gmd + "date", new XElement(gco + "Date"), metadataDate),
                                                                    new XElement(gmd + "dateType",
                                                                         new XElement(gmd + "CI_DateTypeCode",
                                                                             new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode"),

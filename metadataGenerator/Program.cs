@@ -17,31 +17,49 @@ namespace metadataGenerator
         {
             //create necessary classes
             ConnectionSQL SqlConnection = new ConnectionSQL();
+            ConnectionPostgreSQL PsqlConnetion = new ConnectionPostgreSQL();
             Logger Logger = new Logger();
             Metadata Metadata = new Metadata();
+            Parameters Parameters = new Parameters();
+            Parameters.generator();
+
+            
 
             Logger.createLog("Metaveri Oluşturma Başlatıldı", "i");
+
+            string metaDataFolder = Parameters.p_metadataFolder;
+            string topicCategory = Parameters.p_topicCategory;
+
+            //wms and wfs
+            List<string> onlineSources = new List<string>();
+            foreach (var i in Parameters.p_onlineResources)
+            {
+                onlineSources.Add(i.Value<string>("Name"));
+            }
+
             //get static values from app.config
             string metaTableName = ConfigurationManager.AppSettings["metaTableName"];
             string tableCriteria = ConfigurationManager.AppSettings["tableCriteria"];
             string organizationEmail = ConfigurationManager.AppSettings["organizationEmail"];
             string organizationName = ConfigurationManager.AppSettings["organizationName"];
-            string metaDataFolder = ConfigurationManager.AppSettings["metaDataFolder"];
             string guidColumnName = ConfigurationManager.AppSettings["guidColumn"];
-            string topicCategory = ConfigurationManager.AppSettings["topicCategory"];
 
             var spin = new ConsoleSpinner();
             Console.Write("Tamamlanıyor....");
             try //main code block
             {
-                DataTable table = SqlConnection.ShowDataInGridView("SELECT top 10 * FROM " + metaTableName + " WHERE " + tableCriteria);
+                //DataTable table = SqlConnection.ShowDataInGridView("SELECT top 10 * FROM " + metaTableName + " WHERE " + tableCriteria);
+
+                DataTable table = PsqlConnetion.getResults("SELECT * FROM " + metaTableName + " WHERE " + tableCriteria+ " limit 100");
+
+
                 int totalRows = table.Rows.Count;
                 Logger.createLog(metaTableName + "\n\t" + tableCriteria + "\n\t" + totalRows + "- Veri Sayısı", "i");
                 foreach (DataRow row in table.Rows)
                 {
                     //fetch data from dt by SQL column names
                     string rowId = row[guidColumnName].ToString();
-                    string responsibleEmail = row["USER_MODIFY_N"].ToString();
+                    string responsibleEmail = row["USER_MODIFY_N"].ToString() + "@kultur.gov.tr";
                     string sit_adi = row["ADI"].ToString();
                     string genel_tanim = row["GENEL_TANIM"].ToString();
 
@@ -68,11 +86,11 @@ namespace metadataGenerator
                     }
 
                     //online resources wms,wfs
-                    List<string> onlineSources = new List<string>();
-                    foreach (string os in (ConfigurationManager.AppSettings["onlineSources"].Split(new char[] { ';' })))
-                    {
-                        onlineSources.Add(os);
-                    }
+                    //List<string> onlineSources = new List<string>();
+                    //foreach (string os in (ConfigurationManager.AppSettings["onlineSources"].Split(new char[] { ';' })))
+                    //{
+                    //    onlineSources.Add(os);
+                    //}
 
                     Metadata.createMetaData(rowId, responsibleEmail, sit_adi, genel_tanim, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
                                             keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources);
