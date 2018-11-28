@@ -26,6 +26,7 @@ namespace metadataGenerator
 
                 //definition of all namespaces existing in the metadata document
                 XNamespace gmd = "http://www.isotc211.org/2005/gmd";
+                XNamespace srv = "http://www.isotc211.org/2005/srv";
                 XNamespace gco = "http://www.isotc211.org/2005/gco";
                 XNamespace xsi = "http://www.w3.org/2001/XMLSchema-instance";
                 XNamespace gml = "http://www.opengis.net/gml";
@@ -36,6 +37,7 @@ namespace metadataGenerator
                     new XDeclaration("1.0", "UTF-8", "yes"),
                     new XElement(gmd + "MD_Metadata",
                         new XAttribute(XNamespace.Xmlns + "gmd", gmd),
+                        new XAttribute(XNamespace.Xmlns + "srv", srv),
                         new XAttribute(XNamespace.Xmlns + "gco", gco),
                         new XAttribute(XNamespace.Xmlns + "xsi", xsi),
                         new XAttribute(XNamespace.Xmlns + "gml", gml),
@@ -67,7 +69,7 @@ namespace metadataGenerator
                         new XElement(gmd + "hierarchyLevel",
                             new XElement(gmd + "MD_ScopeCode",
                                 new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#MD_ScopeCode"),
-                                new XAttribute("codeListValue", "dataset"), "Veri Seti")
+                                new XAttribute("codeListValue", "service"), "Veri Servisi")
                             ),
                         new XElement(gmd + "contact",
                             new XElement(gmd + "CI_ResponsibleParty",
@@ -106,7 +108,7 @@ namespace metadataGenerator
                             )
                         ),
                         new XElement(gmd + "identificationInfo",
-                            new XElement(gmd + "MD_DataIdentification",
+                            new XElement(srv + "SV_ServiceIdentification",
                                 new XElement(gmd + "citation",
                                     new XElement(gmd + "CI_Citation",
 
@@ -247,7 +249,7 @@ namespace metadataGenerator
                                     new XElement(gmd + "MD_TopicCategoryCode", topicCategory) //topic may be involved to app.config
                                 ),
 
-                                new XElement(gmd + "extent",
+                                new XElement(srv + "extent",
                                     new XElement(gmd + "EX_Extent",
                                         new XElement(gmd + "geographicElement",
                                             new XElement(gmd + "EX_GeographicBoundingBox",

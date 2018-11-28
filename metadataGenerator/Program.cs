@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml;
 using System.Data;
-using System.Configuration;
 using System.Threading;
 
 namespace metadataGenerator
@@ -23,8 +21,6 @@ namespace metadataGenerator
             Parameters Parameters = new Parameters();
             Parameters.generator();
 
-            
-
             Logger.createLog("Metaveri Oluşturma Başlatıldı", "i");
 
             string metaDataFolder = Parameters.p_metadataFolder;
@@ -37,12 +33,24 @@ namespace metadataGenerator
                 onlineSources.Add(i.Value<string>("Name"));
             }
 
+            List<string> keywords = new List<string>();
+            foreach (var i in Parameters.p_keywords)
+            {
+                keywords.Add(i.Value<string>("Name"));
+            }
+
             //get static values from app.config
-            string metaTableName = ConfigurationManager.AppSettings["metaTableName"];
-            string tableCriteria = ConfigurationManager.AppSettings["tableCriteria"];
-            string organizationEmail = ConfigurationManager.AppSettings["organizationEmail"];
-            string organizationName = ConfigurationManager.AppSettings["organizationName"];
-            string guidColumnName = ConfigurationManager.AppSettings["guidColumn"];
+            string metaTableName = Parameters.p_tableName;
+            string tableCriteria = Parameters.p_tableCriteria;
+            string organizationEmail = Parameters.p_organizationEmail;
+            string organizationName = Parameters.p_kurumName;
+            string guidColumnName = Parameters.p_guid;
+            string bboxWest = Parameters.p_bbox_west;
+            string bboxEast = Parameters.p_bbox_east;
+            string bboxNorth = Parameters.p_bbox_north;
+            string bboxSouth = Parameters.p_bbox_south;
+            string resposibleEmail = Parameters.p_responsibleMail;
+            string recordName = Parameters.p_metadataName;
 
             var spin = new ConsoleSpinner();
             Console.Write("Tamamlanıyor....");
@@ -50,7 +58,7 @@ namespace metadataGenerator
             {
                 //DataTable table = SqlConnection.ShowDataInGridView("SELECT top 10 * FROM " + metaTableName + " WHERE " + tableCriteria);
 
-                DataTable table = PsqlConnetion.getResults("SELECT * FROM " + metaTableName + " WHERE " + tableCriteria+ " limit 100");
+                DataTable table = PsqlConnetion.getResults("SELECT * FROM " + metaTableName + " WHERE " + tableCriteria);
 
 
                 int totalRows = table.Rows.Count;
@@ -59,40 +67,26 @@ namespace metadataGenerator
                 {
                     //fetch data from dt by SQL column names
                     string rowId = row[guidColumnName].ToString();
-                    string responsibleEmail = row["USER_MODIFY_N"].ToString() + "@kultur.gov.tr";
-                    string sit_adi = row["ADI"].ToString();
-                    string genel_tanim = row["GENEL_TANIM"].ToString();
+                    string responsibleEmail = row[resposibleEmail].ToString();
+                    string sit_adi = row[recordName].ToString();
+                    string abstractOfRecord = sit_adi.ToString();
 
-
-                    //bounding box conversions
-                    BoundingBox Bbox = new BoundingBox(
-                        Convert.ToDouble(row["CLLY"]),
-                        Convert.ToDouble(row["CURY"]),
-                        Convert.ToDouble(row["CLLX"]),
-                        Convert.ToDouble(row["CURY"])
-                        );
-                    string westBoundLongitude = Bbox.WBL.ToString();
-                    string eastBoundLongitude = Bbox.EBL.ToString();
-                    string southBoundLatitude = Bbox.SBL.ToString();
-                    string northBoundLatitude = Bbox.NBL.ToString();
+                    //bbox
+                    string westBoundLongitude = row[bboxWest].ToString();
+                    string eastBoundLongitude = row[bboxEast].ToString();
+                    string southBoundLatitude = row[bboxSouth].ToString();
+                    string northBoundLatitude = row[bboxNorth].ToString();
 
                     //createMetaData keywords
                     List<string> keywordsColumnNames = new List<string>();
                     
-                    foreach (string kw in (ConfigurationManager.AppSettings["keywords"].Split(new char[] { ';' })))
+                    foreach (string kw in (keywords))
                     {
                         if (row[kw].ToString() != "" || row[kw].ToString() != null)
                             keywordsColumnNames.Add(row[kw].ToString());
                     }
 
-                    //online resources wms,wfs
-                    //List<string> onlineSources = new List<string>();
-                    //foreach (string os in (ConfigurationManager.AppSettings["onlineSources"].Split(new char[] { ';' })))
-                    //{
-                    //    onlineSources.Add(os);
-                    //}
-
-                    Metadata.createMetaData(rowId, responsibleEmail, sit_adi, genel_tanim, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
+                    Metadata.createMetaData(rowId, responsibleEmail, sit_adi, abstractOfRecord, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
                                             keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources);
                     //for visual satisfaction :)
                     spin.Turn();
