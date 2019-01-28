@@ -25,21 +25,12 @@ namespace metadataGenerator
 
             string metaDataFolder = Parameters.p_metadataFolder;
             string topicCategory = Parameters.p_topicCategory;
+            List<string> keywords = Parameters.p_keywords;
+            List<string> onlineSources = Parameters.p_onlineResources;
 
-            //wms and wfs
-            List<string> onlineSources = new List<string>();
-            foreach (var i in Parameters.p_onlineResources)
-            {
-                onlineSources.Add(i.Value<string>("Name"));
-            }
 
-            List<string> keywords = new List<string>();
-            foreach (var i in Parameters.p_keywords)
-            {
-                keywords.Add(i.Value<string>("Name"));
-            }
 
-            //get static values from app.config
+            //get static values from configuration file
             string metaTableName = Parameters.p_tableName;
             string tableCriteria = Parameters.p_tableCriteria;
             string organizationEmail = Parameters.p_organizationEmail;
@@ -56,11 +47,7 @@ namespace metadataGenerator
             Console.Write("Tamamlanıyor....");
             try //main code block
             {
-                //DataTable table = SqlConnection.ShowDataInGridView("SELECT top 10 * FROM " + metaTableName + " WHERE " + tableCriteria);
-
                 DataTable table = PsqlConnetion.getResults("SELECT * FROM " + metaTableName + " WHERE " + tableCriteria);
-
-
                 int totalRows = table.Rows.Count;
                 Logger.createLog(metaTableName + "\n\t" + tableCriteria + "\n\t" + totalRows + "- Veri Sayısı", "i");
                 foreach (DataRow row in table.Rows)
@@ -88,7 +75,8 @@ namespace metadataGenerator
 
                     Metadata.createMetaData(rowId, responsibleEmail, sit_adi, abstractOfRecord, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
                                             keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources);
-                    //for visual satisfaction :)
+
+                    //progress bar like spinning bar
                     spin.Turn();
 
                 }
