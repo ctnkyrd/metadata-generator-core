@@ -42,7 +42,19 @@ namespace metadataGenerator
             string recordName = Parameters.p_vt_metadataName;
 
             var spin = new ConsoleSpinner();
-            Console.Write("Tamamlanıyor....");
+
+            Console.WriteLine(@"╔════╦╗─╔╦═══╦══╗╔═══╗╔═══╦═╗─╔╦════╦═══╦═══╦═══╦═══╦═══╦╗──╔╦═══╦═╗─╔╗
+║╔╗╔╗║║─║║╔═╗║╔╗║║╔═╗║║╔══╣║╚╗║║╔╗╔╗║╔══╣╔═╗║╔═╗║╔═╗║╔═╗║╚╗╔╝║╔═╗║║╚╗║║
+╚╝║║╚╣║─║║║─╚╣╚╝╚╣╚══╗║╚══╣╔╗╚╝╠╝║║╚╣╚══╣║─╚╣╚═╝║║─║║╚══╬╗╚╝╔╣║─║║╔╗╚╝║
+──║║─║║─║║║─╔╣╔═╗╠══╗║║╔══╣║╚╗║║─║║─║╔══╣║╔═╣╔╗╔╣╚═╝╠══╗║╚╗╔╝║║─║║║╚╗║║
+──║║─║╚═╝║╚═╝║╚═╝║╚═╝║║╚══╣║─║║║─║║─║╚══╣╚╩═║║║╚╣╔═╗║╚═╝║─║║─║╚═╝║║─║║║
+──╚╝─╚═══╩═══╩═══╩═══╝╚═══╩╝─╚═╝─╚╝─╚═══╩═══╩╝╚═╩╝─╚╩═══╝─╚╝─╚═══╩╝─╚═╝
+");
+
+            Console.WriteLine("Metadata Generator PRO V1.0'a Hoşgeldiniz!, Devam etmek için lütfen Enter'a basınız basınız...");
+            var key = Console.ReadLine();
+
+            Console.Write("Tamamlanıyor...."); 
             try //main code block
             {
                 DataTable table = PsqlConnetion.getResults("SELECT * FROM " + metaTableName + " WHERE " + tableCriteria);
