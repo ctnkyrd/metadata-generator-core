@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -28,17 +29,17 @@ namespace metadataGenerator
         public string p_kurumName { get; set; }
         public string p_organizationEmail { get; set; }
         //Record Base Information
-        public List<string> p_keywords { get; set; }
+        public List<string> p_vt_keywords { get; set; }
         public string p_tableName { get; set; }
         public string p_tableCriteria { get; set; }
-        public string p_guid { get; set; }
-        public string p_metadataName { get; set; }
-        public string p_responsibleMail { get; set; }
+        public string p_vt_guid { get; set; }
+        public string p_vt_metadataName { get; set; }
+        public string p_vt_responsibleMail { get; set; }
         //BBOX
-        public string p_bbox_west { get; set; }
-        public string p_bbox_east { get; set; }
-        public string p_bbox_north { get; set; }
-        public string p_bbox_south { get; set; }
+        public string p_vt_bbox_west { get; set; }
+        public string p_vt_bbox_east { get; set; }
+        public string p_vt_bbox_north { get; set; }
+        public string p_vt_bbox_south { get; set; }
 
 
         public string cnnString()
@@ -52,18 +53,18 @@ namespace metadataGenerator
             p_metadataFolder = data.General.MetadataFolder;
             p_topicCategory = data.General.TopicCategory;
             p_onlineResources = jArray2ListString(data.General.OnlineResources);
-            p_keywords = getColumnNamesMulti(data.Table.KeywordsColumns);
+            p_vt_keywords = getColumnNamesMulti(data.Table.KeywordsColumns);
             p_tableName = data.Table.TableName;
             p_tableCriteria = data.Table.Criteria;
-            p_metadataName = data.Table.MetadataName;
-            
-            p_guid = getColumnName(data.Table.GUID);
+            p_vt_metadataName = getColumnName(data.Table.MetadataName);
 
-            p_responsibleMail = data.Table.ResponsibleMail;
-            p_bbox_west = data.Table.BBOX.westLongitute;
-            p_bbox_east = data.Table.BBOX.eastLongitude;
-            p_bbox_north = data.Table.BBOX.northLatitude;
-            p_bbox_south = data.Table.BBOX.southLatidude;
+            p_vt_guid = getColumnName(data.Table.GUID);
+
+            p_vt_responsibleMail = getColumnName(data.Table.ResponsibleMail);
+            p_vt_bbox_west = getColumnName(data.Table.BBOX.westLongitute);
+            p_vt_bbox_east = getColumnName(data.Table.BBOX.eastLongitude);
+            p_vt_bbox_north = getColumnName(data.Table.BBOX.northLatitude);
+            p_vt_bbox_south = getColumnName(data.Table.BBOX.southLatidude);
             p_kurumName = data.Kurum.Name;
             p_organizationEmail = data.Kurum.OrganizationEmail;
         }
@@ -82,12 +83,12 @@ namespace metadataGenerator
             foreach (JToken i in column)
             {
                 Match match = rFilter.Match(i.Value<string>("Name"));
-                if (match.Success) arrayList.Add(i.Value<string>("Name"));
+                if (match.Success) arrayList.Add(match.Groups[2].Value);
             }
             return arrayList;
         }
 
-        public List<string> jArray2ListString (JArray array)
+        public List<string> jArray2ListString(JArray array)
         {
             List<string> arrayList = new List<string>();
             foreach (var i in array)
@@ -96,5 +97,10 @@ namespace metadataGenerator
             }
             return arrayList;
         }
+
+        //public string getRowValue(DataRow row, string column)
+        //{
+
+        //}
     }
 }

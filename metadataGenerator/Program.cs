@@ -25,23 +25,21 @@ namespace metadataGenerator
 
             string metaDataFolder = Parameters.p_metadataFolder;
             string topicCategory = Parameters.p_topicCategory;
-            List<string> keywords = Parameters.p_keywords;
+            List<string> keywords = Parameters.p_vt_keywords;
             List<string> onlineSources = Parameters.p_onlineResources;
-
-
 
             //get static values from configuration file
             string metaTableName = Parameters.p_tableName;
             string tableCriteria = Parameters.p_tableCriteria;
             string organizationEmail = Parameters.p_organizationEmail;
             string organizationName = Parameters.p_kurumName;
-            string guidColumnName = Parameters.p_guid;
-            string bboxWest = Parameters.p_bbox_west;
-            string bboxEast = Parameters.p_bbox_east;
-            string bboxNorth = Parameters.p_bbox_north;
-            string bboxSouth = Parameters.p_bbox_south;
-            string resposibleEmail = Parameters.p_responsibleMail;
-            string recordName = Parameters.p_metadataName;
+            string guidColumnName = Parameters.p_vt_guid;
+            string bboxWest = Parameters.p_vt_bbox_west;
+            string bboxEast = Parameters.p_vt_bbox_east;
+            string bboxNorth = Parameters.p_vt_bbox_north;
+            string bboxSouth = Parameters.p_vt_bbox_south;
+            string resposibleEmail = Parameters.p_vt_responsibleMail;
+            string recordName = Parameters.p_vt_metadataName;
 
             var spin = new ConsoleSpinner();
             Console.Write("Tamamlanıyor....");
@@ -127,7 +125,7 @@ namespace metadataGenerator
                     case 2: Console.Write("\\"); break;
                     case 3: Console.Write("|"); break;
                 }
-                Thread.Sleep(100);
+                Thread.Sleep(1);
                 Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
             }
         }
