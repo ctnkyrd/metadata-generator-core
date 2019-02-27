@@ -1,0 +1,36 @@
+{
+    "General": {
+        "MetadataFolder": "GENERATEDXML",
+        "PostgresqlConnectionString": "PORT=5432;DATABASE=tesdata;HOST=192.168.30.136;PASSWORD=Ankara123;USER ID=postgres",
+        "TopicCategory": "location",
+        "OnlineResources": [
+            {"Name": "http://tues.kultur.gov.tr/netgis/wms.ashx?ncws=NC_ANIT"},
+            {"Name": "http://tues.kultur.gov.tr/netgis/wfs.ashx?ncws=NC_ANIT"}
+        ],
+        "Language": "tur"
+    },
+
+    "Kurum": {
+        "Name": "Netcad Genel Müdürlüğü",
+        "OrganizationEmail": "Ardaarda@netcad.com.tr",
+        "Role": "pointOfContact"
+    },
+    "Table": {
+        "TableName": "vw_plan_sinir_deneme",
+        "Criteria": "adi is not null",
+        "KeywordsColumns": [
+            {"Name": "{T@adi}"},
+            {"Name": "{T@netcad_pl}"}
+        ],
+        "GUID": "{T@guid}",
+        "MetadataName": "{T@adi}",
+        "ResponsibleMail": "{T@user_modify_n}",
+        "BBOX": {
+            "westLongitute": "{T@st_xmin}",
+            "eastLongitude": "{T@st_xmax}",
+            "northLatitude": "{T@st_ymax}",
+            "southLatidude": "{T@st_ymin}"
+        }
+        
+    }
+}
