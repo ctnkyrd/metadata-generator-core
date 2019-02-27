@@ -7,7 +7,9 @@
             {"Name": "http://tues.kultur.gov.tr/netgis/wms.ashx?ncws=NC_ANIT"},
             {"Name": "http://tues.kultur.gov.tr/netgis/wfs.ashx?ncws=NC_ANIT"}
         ],
-        "Language": "tur"
+        "Language": "tur",
+        "useLimitation": "Bilgi Amaçlıdır. Resmi İşlemlerde Kullanılamaz. Veriler çoğaltılarak hiçbir şekilde üçüncü şahıslara kullandırılamaz ve yayınlanamaz. Verilerin amaç dışında ve ticari amaçla kullanıldığının tespit edilmesi halinde ilgililer hakkında hukuki işlemler başlatılacaktır.",
+        "otherConstraints": "Bilgi Amaçlıdır. Resmi İşlemlerde Kullanılamaz. Veriler çoğaltılarak hiçbir şekilde üçüncü şahıslara kullandırılamaz ve yayınlanamaz. Verilerin amaç dışında ve ticari amaçla kullanıldığının tespit edilmesi halinde ilgililer hakkında hukuki işlemler başlatılacaktır"
     },
 
     "Kurum": {

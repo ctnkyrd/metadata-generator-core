@@ -13,7 +13,10 @@ namespace metadataGenerator
         Logger Logger = new Logger();
         public void createMetaData(string oid, string responsibleEmail, string metadataName, string genel_tanim, string westBoundLongitude,
                                 string eastBoundLongitude, string southBoundLatitude, string northBoundLatitude, List<string> keywords, string organizationName, 
-                                string organizationEmail, string metaDataFolder, string topicCategory, List<string> onlineResources)
+                                string organizationEmail, string metaDataFolder, string topicCategory, List<string> onlineResources,
+                                //new variables
+                                string useLimitation, string otherConstraints
+                                )
         {
             try
             {
@@ -207,7 +210,8 @@ namespace metadataGenerator
                                 new XElement(gmd + "resourceConstraints",
                                     new XElement(gmd + "MD_Constraints",
                                         new XElement(gmd + "useLimitation", new XElement(gco + "CharacterString",
-                                        "Bilgi Amaçlıdır. Resmi İşlemlerde Kullanılamaz. Veriler çoğaltılarak hiçbir şekilde üçüncü şahıslara kullandırılamaz ve yayınlanamaz. Verilerin amaç dışında ve ticari amaçla kullanıldığının tespit edilmesi halinde ilgililer hakkında hukuki işlemler başlatılacaktır.")
+                                        useLimitation
+                                            )
                                         )
                                     )
                                 ),
@@ -223,7 +227,8 @@ namespace metadataGenerator
                                         ),
                                         new XElement(gmd + "otherConstraints",
                                             new XElement(gco + "CharacterString",
-                                            "Bilgi Amaçlıdır. Resmi İşlemlerde Kullanılamaz. Veriler çoğaltılarak hiçbir şekilde üçüncü şahıslara kullandırılamaz ve yayınlanamaz. Verilerin amaç dışında ve ticari amaçla kullanıldığının tespit edilmesi halinde ilgililer hakkında hukuki işlemler başlatılacaktır.")
+                                            otherConstraints
+                                            )
                                         )
                                     )
                                 ),
@@ -250,18 +255,6 @@ namespace metadataGenerator
                                                 new XElement(gmd + "northBoundLatitude", new XElement(gco + "Decimal", northBoundLatitude))
                                             )
                                         )
-                                                //new XElement(gmd + "temporalElement",
-                                                //    new XElement(gmd + "EX_TemporalExtent",
-                                                //        new XElement(gmd + "extent",
-                                                //            new XElement(gml + "TimePeriod",
-                                                //                new XAttribute(gml + "id", "IDc1161bd1-d59a-4641-b0a5-c60fff77476b"), //id must be corrected
-                                                //                new XAttribute(xsi + "type", "gml:TimePeriodType"),
-                                                //                new XElement(gml + "beginPosition"), //beginning time must be added
-                                                //                new XElement(gml + "endPosition") //ending time must be added
-                                                //            )
-                                                //        )
-                                                //    )
-                                                //)
                                      )
                                 )
                             )

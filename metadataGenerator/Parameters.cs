@@ -41,6 +41,8 @@ namespace metadataGenerator
         public string p_vt_bbox_north { get; set; }
         public string p_vt_bbox_south { get; set; }
 
+        public string p_useLimitation { get; set; }
+        public string p_otherConstraints { get; set; }
 
         public string cnnString()
         {
@@ -57,6 +59,9 @@ namespace metadataGenerator
             p_tableName = data.Table.TableName;
             p_tableCriteria = data.Table.Criteria;
             p_vt_metadataName = getColumnName(data.Table.MetadataName);
+
+            p_useLimitation = data.General.useLimitation;
+            p_otherConstraints = data.General.otherConstraints;
 
             p_vt_guid = getColumnName(data.Table.GUID);
 

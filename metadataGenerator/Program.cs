@@ -41,6 +41,10 @@ namespace metadataGenerator
             string resposibleEmail = Parameters.p_vt_responsibleMail;
             string recordName = Parameters.p_vt_metadataName;
 
+            //new variables
+            string useLimitation = Parameters.p_useLimitation;
+            string otherConstraints = Parameters.p_otherConstraints;
+
             var spin = new ConsoleSpinner();
 
             Console.WriteLine(@"╔════╦╗─╔╦═══╦══╗╔═══╗╔═══╦═╗─╔╦════╦═══╦═══╦═══╦═══╦═══╦╗──╔╦═══╦═╗─╔╗
@@ -84,7 +88,8 @@ namespace metadataGenerator
                     }
 
                     Metadata.createMetaData(rowId, responsibleEmail, sit_adi, abstractOfRecord, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
-                                            keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources);
+                                            keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources,
+                                            useLimitation, otherConstraints);
 
                     //progress bar like spinning bar
                     spin.Turn();
