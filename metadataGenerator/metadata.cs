@@ -11,7 +11,7 @@ namespace metadataGenerator
     {
 
         Logger Logger = new Logger();
-        public void createMetaData(string oid, string responsibleEmail, string sit_adi, string genel_tanim, string westBoundLongitude,
+        public void createMetaData(string oid, string responsibleEmail, string metadataName, string genel_tanim, string westBoundLongitude,
                                 string eastBoundLongitude, string southBoundLatitude, string northBoundLatitude, List<string> keywords, string organizationName, 
                                 string organizationEmail, string metaDataFolder, string topicCategory, List<string> onlineResources)
         {
@@ -113,7 +113,7 @@ namespace metadataGenerator
                                     new XElement(gmd + "CI_Citation",
 
                                         // name of the unit
-                                        new XElement(gmd + "title", new XElement(gco + "CharacterString", sit_adi)),
+                                        new XElement(gmd + "title", new XElement(gco + "CharacterString", metadataName)),
 
                                         new XElement(gmd + "date",
                                             new XElement(gmd + "CI_Date",
@@ -148,17 +148,6 @@ namespace metadataGenerator
                                                 )
                                             )
                                         )
-                                        //new XElement(gmd + "identifier",
-                                        //    new XElement(gmd + "RS_Identifier",
-                                        //        new XElement(gmd + "code",
-                                        //            new XElement(gco + "CharacterString")
-                                        //        ),
-                                        //        new XElement(gmd + "codeSpace",
-                                        //            new XElement(gco + "CharacterString")
-                                        //        )
-                                        //    )
-                                        //)
-
                                     )
                                 ),
 
@@ -190,20 +179,19 @@ namespace metadataGenerator
                                 ),
 
                                 //keywords
-                                new XElement(gmd + "descriptiveKeywords",
+                                from kw in keywords
+                                select new XElement(gmd + "descriptiveKeywords",
                                     new XElement(gmd + "MD_Keywords",
-                                        //for multiple keyword arrangement
-                                        from kw in keywords
-                                        select new XElement(gmd + "keyword", new XElement(gco + "CharacterString", kw)),
-                                            new XElement(gmd + "thesaurusName",
+                                         new XElement(gmd + "keyword", new XElement(gco + "CharacterString", kw)),                               
+                                        new XElement(gmd + "thesaurusName",
                                             new XElement(gmd + "CI_Citation",
-                                                new XElement(gmd + "title", new XElement(gco + "CharacterString", "TUCBS")),
+                                                new XElement(gmd + "title", new XElement(gco + "CharacterString", kw)),
                                                 new XElement(gmd + "date",
                                                     new XElement(gmd + "CI_Date",
                                                         new XElement(gmd + "date", new XElement(gco + "Date", metadataDate)),
                                                         new XElement(gmd + "dateType",
-                                                            new XElement(gmd+"CI_DateTypeCode",
-                                                            new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode"),
+                                                            new XElement(gmd + "CI_DateTypeCode",
+                                                            new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/ML_gmxCodelists.xml#CI_DateTypeCode"),
                                                             new XAttribute("codeListValue", "revision"), "revision"
                                                             )
                                                         )
@@ -212,6 +200,7 @@ namespace metadataGenerator
                                             )
                                         )
                                     )
+
                                 ),
 
                                 // text content may be revised
@@ -238,7 +227,9 @@ namespace metadataGenerator
                                         )
                                     )
                                 ),
-                                new XElement(gmd + "language",
+                                new XElement(srv + "serviceType", 
+                                    new XElement(gco + "LocalName", " Konumsal ")),
+                                       new XElement(gmd + "language",
                                     new XElement(gmd + "LanguageCode",
                                         new XAttribute("codeList", "http://www.loc.gov/standards/iso639-2/"),
                                         new XAttribute("codeListValue", "tur"), "tur")
@@ -286,9 +277,9 @@ namespace metadataGenerator
                                 new XElement(gmd + "transferOptions",
                                     new XElement(gmd + "MD_DigitalTransferOptions",
                                     //wms wfs servis ekleme
-                                     from os in onlineResources
-                                     select new XElement(gmd + "onLine",
-                                            new XElement(gmd + "CI_OnlineResource",
+                                      new XElement(gmd + "onLine",
+                                         from os in onlineResources
+                                            select new XElement(gmd + "CI_OnlineResource",
                                                 new XElement(gmd + "linkage",
                                                     new XElement(gmd + "URL", os) 
                                                 )
@@ -305,7 +296,7 @@ namespace metadataGenerator
                                         new XElement(gmd + "level",
                                             new XElement(gmd + "MD_ScopeCode",
                                                 new XAttribute("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#MD_ScopeCode"),
-                                                new XAttribute("codeListValue", "dataset"), "dataset" //what if it's not dataset
+                                                new XAttribute("publication", "publication"), "publication" //what if it's not dataset
                                             )
                                         )
                                     )
