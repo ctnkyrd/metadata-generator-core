@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace metadataGenerator
@@ -11,8 +9,8 @@ namespace metadataGenerator
     {
 
         Logger Logger = new Logger();
-        public void createMetaData(string oid, string responsibleEmail, string metadataName, string genel_tanim, string westBoundLongitude,
-                                string eastBoundLongitude, string southBoundLatitude, string northBoundLatitude, List<string> keywords, string organizationName, 
+        public XDocument createMetaData(string oid, string responsibleEmail, string metadataName, string genel_tanim, string westBoundLongitude,
+                                string eastBoundLongitude, string southBoundLatitude, string northBoundLatitude, List<string> keywords, string organizationName,
                                 string organizationEmail, string metaDataFolder, string topicCategory, List<string> onlineResources,
                                 //new variables
                                 string useLimitation, string otherConstraints
@@ -96,7 +94,7 @@ namespace metadataGenerator
                                     )
                                 )
 
-                            
+
                         )
                     ),
                         new XElement(gmd + "dateStamp",
@@ -185,7 +183,7 @@ namespace metadataGenerator
                                 from kw in keywords
                                 select new XElement(gmd + "descriptiveKeywords",
                                     new XElement(gmd + "MD_Keywords",
-                                         new XElement(gmd + "keyword", new XElement(gco + "CharacterString", kw)),                               
+                                         new XElement(gmd + "keyword", new XElement(gco + "CharacterString", kw)),
                                         new XElement(gmd + "thesaurusName",
                                             new XElement(gmd + "CI_Citation",
                                                 new XElement(gmd + "title", new XElement(gco + "CharacterString", kw)),
@@ -232,7 +230,7 @@ namespace metadataGenerator
                                         )
                                     )
                                 ),
-                                new XElement(srv + "serviceType", 
+                                new XElement(srv + "serviceType",
                                     new XElement(gco + "LocalName", " Konumsal ")),
                                        new XElement(gmd + "language",
                                     new XElement(gmd + "LanguageCode",
@@ -269,14 +267,14 @@ namespace metadataGenerator
                                 ),
                                 new XElement(gmd + "transferOptions",
                                     new XElement(gmd + "MD_DigitalTransferOptions",
-                                    //wms wfs servis ekleme
+                                      //wms wfs servis ekleme
                                       new XElement(gmd + "onLine",
                                          from os in onlineResources
-                                            select new XElement(gmd + "CI_OnlineResource",
-                                                new XElement(gmd + "linkage",
-                                                    new XElement(gmd + "URL", os) 
-                                                )
-                                            )
+                                         select new XElement(gmd + "CI_OnlineResource",
+                                             new XElement(gmd + "linkage",
+                                                 new XElement(gmd + "URL", os)
+                                             )
+                                         )
                                         )
                                     )
                                 )
@@ -334,16 +332,29 @@ namespace metadataGenerator
 
                     )
                 );
-
                 xdoc.Save(metaDataFolder + "\\" + fileName + ".xml");
+                return xdoc;
             }
             catch (Exception e)
             {
                 Logger.createLog(e.Message.ToString(), "e");
+
+                XDocument erroX = new XDocument(
+                    new XDeclaration("1.0", "UTF-8", "yes"),
+                    new XElement("Error",
+                            new XElement("CharacterString", e.Message.ToString())
+                )
+                    );
+
+                return erroX;
             }
 
         }
 
+        public void insertMetadata(XDocument metadata)
+        {
+
+        }
 
     }
 

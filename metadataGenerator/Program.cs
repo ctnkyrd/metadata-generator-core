@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading;
+using System.Xml.Linq;
 
 namespace metadataGenerator
 {
@@ -101,7 +102,7 @@ namespace metadataGenerator
                                     keywordsColumnNames.Add(row[kw].ToString());
                             }
 
-                            Metadata.createMetaData(rowId, responsibleEmail, sit_adi, abstractOfRecord, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
+                            XDocument metadata = Metadata.createMetaData(rowId, responsibleEmail, sit_adi, abstractOfRecord, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
                                                     keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources,
                                                     useLimitation, otherConstraints);
 
