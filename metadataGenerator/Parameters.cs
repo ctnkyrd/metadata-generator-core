@@ -97,10 +97,5 @@ namespace metadataGenerator
             }
             return arrayList;
         }
-
-        //public string getRowValue(DataRow row, string column)
-        //{
-
-        //}
     }
 }
