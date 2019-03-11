@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using System.Xml;
 using System.Data;
 using System.Threading;
 
@@ -58,43 +54,53 @@ namespace metadataGenerator
             Console.WriteLine("Metadata Generator PRO V1.0'a Hoşgeldiniz!, Devam etmek için lütfen Enter'a basınız basınız...");
             var key = Console.ReadLine();
 
-            Console.Write("Tamamlanıyor...."); 
+            //Console.Write("Tamamlanıyor...."); 
             try //main code block
             {
                 DataTable table = PsqlConnetion.getResults("SELECT * FROM " + metaTableName + " WHERE " + tableCriteria);
                 int totalRows = table.Rows.Count;
                 Logger.createLog(metaTableName + "\n\t" + tableCriteria + "\n\t" + totalRows + "- Veri Sayısı", "i");
-                foreach (DataRow row in table.Rows)
+                
+                using (var progress = new ProgressBar())
                 {
-                    //fetch data from dt by SQL column names
-                    string rowId = row[guidColumnName].ToString();
-                    string responsibleEmail = row[resposibleEmail].ToString();
-                    string sit_adi = row[recordName].ToString();
-                    string abstractOfRecord = sit_adi.ToString();
-
-                    //bbox
-                    string westBoundLongitude = row[bboxWest].ToString();
-                    string eastBoundLongitude = row[bboxEast].ToString();
-                    string southBoundLatitude = row[bboxSouth].ToString();
-                    string northBoundLatitude = row[bboxNorth].ToString();
-
-                    //createMetaData keywords
-                    List<string> keywordsColumnNames = new List<string>();
-                    
-                    foreach (string kw in (keywords))
+                    int rowCount = 0;
+                    int totalRowCount = table.Rows.Count;
+                    foreach (DataRow row in table.Rows)
                     {
-                        if (row[kw].ToString() != "" || row[kw].ToString() != null)
-                            keywordsColumnNames.Add(row[kw].ToString());
+                        //fetch data from dt by SQL column names
+                        string rowId = row[guidColumnName].ToString();
+                        string responsibleEmail = row[resposibleEmail].ToString();
+                        string sit_adi = row[recordName].ToString();
+                        string abstractOfRecord = sit_adi.ToString();
+
+                        //bbox
+                        string westBoundLongitude = row[bboxWest].ToString();
+                        string eastBoundLongitude = row[bboxEast].ToString();
+                        string southBoundLatitude = row[bboxSouth].ToString();
+                        string northBoundLatitude = row[bboxNorth].ToString();
+
+                        //createMetaData keywords
+                        List<string> keywordsColumnNames = new List<string>();
+
+                        foreach (string kw in (keywords))
+                        {
+                            if (row[kw].ToString() != "" || row[kw].ToString() != null)
+                                keywordsColumnNames.Add(row[kw].ToString());
+                        }
+
+                        Metadata.createMetaData(rowId, responsibleEmail, sit_adi, abstractOfRecord, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
+                                                keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources,
+                                                useLimitation, otherConstraints);
+
+                        //progress bar like spinning bar
+                        //spin.Turn();
+                        rowCount++;
+                        progress.Report((double)rowCount / totalRowCount);
+                        Thread.Sleep(20);
+
                     }
-
-                    Metadata.createMetaData(rowId, responsibleEmail, sit_adi, abstractOfRecord, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
-                                            keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources,
-                                            useLimitation, otherConstraints);
-
-                    //progress bar like spinning bar
-                    spin.Turn();
-
                 }
+                
 
             }
             catch (Exception e)
@@ -105,6 +111,7 @@ namespace metadataGenerator
             {
                 Console.Write("\r Tamamlandı!");
                 Logger.createLog("İşlem Başarıyla Tamamlandı", "s");
+                Console.ReadLine();
             }
 
 
