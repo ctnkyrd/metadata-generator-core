@@ -455,9 +455,9 @@ namespace metadataGenerator
                             int a = deleteMetadata(url, foundMD, uname, password);
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        Logger.createLog(e.Message.ToString() + Environment.NewLine + updateResponse.ToString(), "e");
+                        return null;
                     }
 
                     return foundMD;
