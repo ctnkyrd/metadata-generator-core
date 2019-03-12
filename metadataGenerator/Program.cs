@@ -106,6 +106,9 @@ namespace metadataGenerator
                                                     keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources,
                                                     useLimitation, otherConstraints);
 
+                            if (Parameters.p_save2Catalog) Metadata.insertMetadata(metadata, Parameters.p_catalogURL, 
+                                                            Parameters.p_catalogUsername, Parameters.p_catalogPassword);
+
                             rowCount++;
                             progress.Report((double)rowCount / totalRows);
 

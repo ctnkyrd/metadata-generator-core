@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -20,6 +21,13 @@ namespace metadataGenerator
         public string p_postgresqlConnectionString {get;set;}
         public string p_topicCategory { get; set; }
         public List<string> p_onlineResources { get; set; }
+
+        //CatalogServer
+        public bool p_save2Catalog { get; set; }
+        public string p_catalogURL { get; set; }
+        public string p_catalogUsername { get; set; }
+        public string p_catalogPassword { get; set; }
+
         //Kurum Information
         public string p_kurumName { get; set; }
         public string p_organizationEmail { get; set; }
@@ -67,6 +75,12 @@ namespace metadataGenerator
             p_vt_bbox_south = getColumnName(data.Table.BBOX.southLatidude);
             p_kurumName = data.Kurum.Name;
             p_organizationEmail = data.Kurum.OrganizationEmail;
+
+            //catalog
+            p_save2Catalog = Convert.ToBoolean(data.CatalogServer.saveToCatalog);
+            p_catalogURL = data.CatalogServer.url;
+            p_catalogUsername = data.CatalogServer.username;
+            p_catalogUsername = data.CatalogServer.password;
         }
 
         public string getColumnName(JValue column)

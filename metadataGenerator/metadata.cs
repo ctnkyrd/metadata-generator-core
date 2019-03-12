@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using System.Net.Http;
+using System.Collections.Specialized;
+using System.Net;
+using System.Text;
+using System.IO;
 
 namespace metadataGenerator
 {
     class Metadata
     {
-
+        private static readonly HttpClient client = new HttpClient();
         Logger Logger = new Logger();
         public XDocument createMetaData(string oid, string responsibleEmail, string metadataName, string genel_tanim, string westBoundLongitude,
                                 string eastBoundLongitude, string southBoundLatitude, string northBoundLatitude, List<string> keywords, string organizationName,
@@ -351,7 +356,62 @@ namespace metadataGenerator
 
         }
 
-        public void insertMetadata(XDocument metadata)
+        public string insertMetadata(XDocument metadata, string url, string username, string password)
+        {
+            try
+            {
+                XDocument postData = metadata;
+                XNamespace csw = "http://www.opengis.net/cat/csw/2.0.2";
+                XDocument transactionInsert = new XDocument(
+                        new XDeclaration("1.0", "UTF-8", "yes"),
+                        new XElement(csw + "Transaction",
+                            new XAttribute("service", "CSW"),
+                            new XAttribute("version", "2.0.2"),
+                            new XElement(csw + "Insert", postData.Root)
+                            )
+                        );
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url + "/srv/eng/csw-publication");
+                byte[] bytes;
+                bytes = Encoding.UTF8.GetBytes(transactionInsert.ToString());
+                request.ContentType = "application/xml; encoding='utf-8'";
+                request.ContentLength = bytes.Length;
+                request.Method = "POST";
+
+                //authentication
+                string uname = username;
+                string pass = password;
+                string encoded = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
+                request.Headers.Add("Authorization", "Basic " + encoded);
+
+                Stream requestStream = request.GetRequestStream();
+                requestStream.Write(bytes, 0, bytes.Length);
+                requestStream.Close();
+                HttpWebResponse response;
+                response = (HttpWebResponse)request.GetResponse();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    Stream responseStream = response.GetResponseStream();
+                    string responseStr = new StreamReader(responseStream).ReadToEnd();
+                    return responseStr;
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                Logger.createLog("Transaction Insert: "+e.Message.ToString(), "e");
+                return null;
+            }
+
+            
+        }
+
+        public void getRecordById(string identifier)
+        {
+
+        }
+
+        public void deleteMetadata(string identifier)
         {
 
         }
