@@ -356,7 +356,7 @@ namespace metadataGenerator
 
         }
 
-        public string insertMetadata(XDocument metadata, string url, string username, string password)
+        public int insertMetadata(XDocument metadata, string url, string username, string password)
         {
             try
             {
@@ -381,7 +381,7 @@ namespace metadataGenerator
                 //authentication
                 string uname = username;
                 string pass = password;
-                string encoded = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
+                string encoded = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(uname + ":" + pass));
                 request.Headers.Add("Authorization", "Basic " + encoded);
 
                 Stream requestStream = request.GetRequestStream();
@@ -393,14 +393,26 @@ namespace metadataGenerator
                 {
                     Stream responseStream = response.GetResponseStream();
                     string responseStr = new StreamReader(responseStream).ReadToEnd();
-                    return responseStr;
+                    XDocument insertResponse = XDocument.Parse(responseStr);
+                    int insertedCount = 0;
+                    try
+                    {
+                        insertedCount = Convert.ToInt16(insertResponse.Descendants(csw + "totalInserted").First().Value);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.createLog(e.Message.ToString()+Environment.NewLine+insertResponse.ToString(), "e");
+                    }
+                    
+
+                    return insertedCount;
                 }
-                return null;
+                else return 0;
             }
             catch (Exception e)
             {
                 Logger.createLog("Transaction Insert: "+e.Message.ToString(), "e");
-                return null;
+                return 0;
             }
 
             

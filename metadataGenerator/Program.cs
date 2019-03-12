@@ -51,6 +51,7 @@ namespace metadataGenerator
 ──╚╝─╚═══╩═══╩═══╩═══╝╚═══╩╝─╚═╝─╚╝─╚═══╩═══╩╝╚═╩╝─╚╩═══╝─╚╝─╚═══╩╝─╚═╝
 ");
             int rowCount = 0;
+            int recordsSavedToCatalog = 0;
             try //main code block
             {
                 DataTable table = PsqlConnetion.getResults("SELECT * FROM " + metaTableName + " WHERE " + tableCriteria);
@@ -105,11 +106,15 @@ namespace metadataGenerator
                             XDocument metadata = Metadata.createMetaData(rowId, responsibleEmail, sit_adi, abstractOfRecord, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
                                                     keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources,
                                                     useLimitation, otherConstraints);
-
-                            if (Parameters.p_save2Catalog) Metadata.insertMetadata(metadata, Parameters.p_catalogURL, 
+                            int insertedRecord = 0;
+                            if (Parameters.p_save2Catalog)
+                            {
+                                insertedRecord = Metadata.insertMetadata(metadata, Parameters.p_catalogURL,
                                                             Parameters.p_catalogUsername, Parameters.p_catalogPassword);
+                            }
 
                             rowCount++;
+                            recordsSavedToCatalog += insertedRecord;
                             progress.Report((double)rowCount / totalRows);
 
                         }
@@ -131,7 +136,8 @@ namespace metadataGenerator
             }
             finally
             {
-                string result = "Metaveri Oluşturma İşlemi " + rowCount + " adet metaveri oluşturularak tamamlandı";
+                string result = "Metaveri Oluşturma İşlemi " + rowCount + " adet metaveri dosyası oluşturularak tamamlandı"+
+                                Environment.NewLine+"Katalog Servise Kayıt Sayısı: "+recordsSavedToCatalog;
                 Logger.createLog(result, "i");
                 Console.WriteLine(result);
                 Console.ReadLine();

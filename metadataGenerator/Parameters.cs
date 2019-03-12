@@ -80,7 +80,7 @@ namespace metadataGenerator
             p_save2Catalog = Convert.ToBoolean(data.CatalogServer.saveToCatalog);
             p_catalogURL = data.CatalogServer.url;
             p_catalogUsername = data.CatalogServer.username;
-            p_catalogUsername = data.CatalogServer.password;
+            p_catalogPassword = data.CatalogServer.password;
         }
 
         public string getColumnName(JValue column)
