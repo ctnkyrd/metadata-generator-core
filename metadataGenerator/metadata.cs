@@ -12,6 +12,20 @@ namespace metadataGenerator
 {
     class Metadata
     {
+        //definition of all namespaces existing in the metadata document
+        XNamespace gmd = "http://www.isotc211.org/2005/gmd";
+        XNamespace dc = "http://purl.org/dc/elements/1.1/";
+        XNamespace srv = "http://www.isotc211.org/2005/srv";
+        XNamespace gco = "http://www.isotc211.org/2005/gco";
+        XNamespace ogc = "http://www.opengis.net/ogc";
+        XNamespace csw = "http://www.opengis.net/cat/csw/2.0.2";
+        XNamespace xsi = "http://www.w3.org/2001/XMLSchema-instance";
+        XNamespace gml = "http://www.opengis.net/gml";
+        XNamespace xlink = "http://www.w3.org/1999/xlink";
+        XNamespace schemaLocation = "http://www.isotc211.org/2005/gmd http://schemas.opengis.net/iso/19139/20060504/gmd/gmd.xsd";
+
+
+
         private static readonly HttpClient client = new HttpClient();
         Logger Logger = new Logger();
         public XDocument createMetaData(string oid, string responsibleEmail, string metadataName, string genel_tanim, string westBoundLongitude,
@@ -30,15 +44,7 @@ namespace metadataGenerator
                 //calculated variables
                 string metadataDate = DateTime.Now.ToString("yyyy-MM-dd");
 
-                //definition of all namespaces existing in the metadata document
-                XNamespace gmd = "http://www.isotc211.org/2005/gmd";
-                XNamespace srv = "http://www.isotc211.org/2005/srv";
-                XNamespace gco = "http://www.isotc211.org/2005/gco";
-                XNamespace xsi = "http://www.w3.org/2001/XMLSchema-instance";
-                XNamespace gml = "http://www.opengis.net/gml";
-                XNamespace xlink = "http://www.w3.org/1999/xlink";
-                XNamespace schemaLocation = "http://www.isotc211.org/2005/gmd http://schemas.opengis.net/iso/19139/20060504/gmd/gmd.xsd";
-
+               
                 XDocument xdoc = new XDocument(
                     new XDeclaration("1.0", "UTF-8", "yes"),
                     new XElement(gmd + "MD_Metadata",
@@ -361,7 +367,6 @@ namespace metadataGenerator
             try
             {
                 XDocument postData = metadata;
-                XNamespace csw = "http://www.opengis.net/cat/csw/2.0.2";
                 XDocument transactionInsert = new XDocument(
                         new XDeclaration("1.0", "UTF-8", "yes"),
                         new XElement(csw + "Transaction",
@@ -403,7 +408,6 @@ namespace metadataGenerator
                     {
                         Logger.createLog(e.Message.ToString()+Environment.NewLine+insertResponse.ToString(), "e");
                     }
-                    
 
                     return insertedCount;
                 }
@@ -414,17 +418,126 @@ namespace metadataGenerator
                 Logger.createLog("Transaction Insert: "+e.Message.ToString(), "e");
                 return 0;
             }
-
             
         }
 
-        public void getRecordById(string identifier)
+        public string getRecordById(string identifier, string url, string username, string password)
         {
+            string guid = identifier;
+            try
+            {
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url + "/srv/eng/csw-publication?request=GetRecordById&service=CSW&version=2.0.2&elementSetName=full&id="+guid+".xml");
+                request.ContentType = "application/xml; encoding='utf-8'";
+                request.Method = "GET";
+
+                //authentication
+                string uname = username;
+                string pass = password;
+                string encoded = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(uname + ":" + pass));
+                request.Headers.Add("Authorization", "Basic " + encoded);
+
+
+                HttpWebResponse response;
+                response = (HttpWebResponse)request.GetResponse();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    Stream responseStream = response.GetResponseStream();
+                    string responseStr = new StreamReader(responseStream).ReadToEnd();
+                    XDocument updateResponse = XDocument.Parse(responseStr);
+                    string foundMD = "";
+
+                    try
+                    {
+                        foundMD = updateResponse.Descendants(dc + "identifier").First().Value;
+                        if (foundMD.Length > 10)
+                        {
+                            int a = deleteMetadata(url, foundMD, uname, password);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.createLog(e.Message.ToString() + Environment.NewLine + updateResponse.ToString(), "e");
+                    }
+
+                    return foundMD;
+                }
+                else return guid+" Not Found!";
+            }
+            catch (Exception e)
+            {
+                Logger.createLog("Transaction GetRecordById: " + e.Message.ToString(), "e");
+                return guid + " Error!";
+            }
 
         }
 
-        public void deleteMetadata(string identifier)
+        public int deleteMetadata(string url, string identifier, string username, string password)
         {
+            string guid = identifier;
+
+            try
+            {
+                
+                XDocument transactionDelete = new XDocument(
+                        new XDeclaration("1.0", "UTF-8", "yes"),
+                        new XElement(csw + "Transaction",
+                        new XAttribute(XNamespace.Xmlns + "csw", csw),
+                        new XAttribute(XNamespace.Xmlns + "ogc", ogc),
+                            new XAttribute("service", "CSW"),
+                            new XAttribute("version", "2.0.2"),
+                            new XElement(csw + "Delete", 
+                                new XElement(csw+ "Constraint", new XAttribute("version", "1.1.0"),
+                                    new XElement(ogc+"Filter",
+                                        new XElement(ogc+ "PropertyIsEqualTo",
+                                            new XElement(ogc+ "PropertyName", "identifier"),
+                                                new XElement(ogc+ "Literal", guid)))
+                                ))
+                            )
+                        );
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url + "/srv/eng/csw-publication");
+                byte[] bytes;
+                bytes = Encoding.UTF8.GetBytes(transactionDelete.ToString());
+                request.ContentType = "application/xml; encoding='utf-8'";
+                request.ContentLength = bytes.Length;
+                request.Method = "POST";
+
+                //authentication
+                string uname = username;
+                string pass = password;
+                string encoded = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(uname + ":" + pass));
+                request.Headers.Add("Authorization", "Basic " + encoded);
+
+                Stream requestStream = request.GetRequestStream();
+                requestStream.Write(bytes, 0, bytes.Length);
+                requestStream.Close();
+                HttpWebResponse response;
+                response = (HttpWebResponse)request.GetResponse();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    Stream responseStream = response.GetResponseStream();
+                    string responseStr = new StreamReader(responseStream).ReadToEnd();
+                    XDocument deleteResponse = XDocument.Parse(responseStr);
+                    int insertedCount = 0;
+                    try
+                    {
+                        insertedCount = Convert.ToInt16(deleteResponse.Descendants(csw + "totalInserted").First().Value);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.createLog(e.Message.ToString() + Environment.NewLine + deleteResponse.ToString(), "e");
+                    }
+
+                    return insertedCount;
+                }
+                else return 0;
+            }
+            catch (Exception e)
+            {
+                Logger.createLog("Transaction Insert: " + e.Message.ToString(), "e");
+                return 0;
+            }
 
         }
 

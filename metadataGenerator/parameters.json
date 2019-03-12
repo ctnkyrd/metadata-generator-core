@@ -13,7 +13,7 @@
 	
 	"CatalogServer":{
 		"saveToCatalog": "true",
-		"url": "http://192.168.1.190:8080/geonetwork",
+		"url": "http://192.168.30.43:8080/geonetwork",
 		"username": "admin",
 		"password": "admin"
 	},
@@ -25,7 +25,7 @@
     },
     "Table": {
         "TableName": "vw_sit",
-        "Criteria": "guid is not null limit 200",
+        "Criteria": "guid is not null limit 1000",
         "KeywordsColumns": [
             {"Name": "{T@adi}"},
             {"Name": "{T@guid}"}

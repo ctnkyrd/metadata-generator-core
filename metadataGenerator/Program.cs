@@ -83,7 +83,7 @@ namespace metadataGenerator
                         foreach (DataRow row in table.Rows)
                         {
                             //fetch data from dt by SQL column names
-                            string rowId = row[guidColumnName].ToString();
+                            string guid = row[guidColumnName].ToString();
                             string responsibleEmail = row[resposibleEmail].ToString();
                             string sit_adi = row[recordName].ToString();
                             string abstractOfRecord = sit_adi.ToString();
@@ -103,9 +103,12 @@ namespace metadataGenerator
                                     keywordsColumnNames.Add(row[kw].ToString());
                             }
 
-                            XDocument metadata = Metadata.createMetaData(rowId, responsibleEmail, sit_adi, abstractOfRecord, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
+                            XDocument metadata = Metadata.createMetaData(guid, responsibleEmail, sit_adi, abstractOfRecord, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
                                                     keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources,
                                                     useLimitation, otherConstraints);
+
+                            Metadata.getRecordById(guid, Parameters.p_catalogURL, Parameters.p_catalogUsername, Parameters.p_catalogPassword);
+
                             int insertedRecord = 0;
                             if (Parameters.p_save2Catalog)
                             {
