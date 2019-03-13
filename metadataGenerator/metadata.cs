@@ -406,12 +406,15 @@ namespace metadataGenerator
                     }
                     catch (Exception e)
                     {
-                        Logger.createLog(e.Message.ToString()+Environment.NewLine+insertResponse.ToString(), "e");
+                        Logger.createLog(e.Message.ToString() + Environment.NewLine + insertResponse.ToString(), "e");
                     }
 
                     return insertedCount;
                 }
-                else return 0;
+                else {
+                    Logger.createLog("InsertMetadata HTTP Status:"+response.StatusCode, "e");
+                    return 0;
+                } 
             }
             catch (Exception e)
             {
@@ -421,7 +424,7 @@ namespace metadataGenerator
             
         }
 
-        public string getRecordById(string identifier, string url, string username, string password)
+        public int getRecordById(string identifier, string url, string username, string password)
         {
             string guid = identifier;
             try
@@ -436,7 +439,6 @@ namespace metadataGenerator
                 string pass = password;
                 string encoded = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(uname + ":" + pass));
                 request.Headers.Add("Authorization", "Basic " + encoded);
-
 
                 HttpWebResponse response;
                 response = (HttpWebResponse)request.GetResponse();
@@ -453,21 +455,26 @@ namespace metadataGenerator
                         if (foundMD.Length > 10)
                         {
                             int a = deleteMetadata(url, foundMD, uname, password);
+                            return a;
                         }
+                        else return 0;
                     }
                     catch (Exception)
                     {
-                        return null;
+                        Logger.createLog("Incorrect Response String Deletemetadata", "e");
+                        return 0;
                     }
-
-                    return foundMD;
                 }
-                else return guid+" Not Found!";
+                else
+                {
+                    Logger.createLog("HTTP Status:" + response.StatusCode, "e");
+                    return -1;
+                }
             }
             catch (Exception e)
             {
-                Logger.createLog("Transaction GetRecordById: " + e.Message.ToString(), "e");
-                return guid + " Error!";
+                Logger.createLog("GetRecordById: " + e.Message.ToString(), "e");
+                return -1;
             }
 
         }
@@ -531,7 +538,10 @@ namespace metadataGenerator
 
                     return insertedCount;
                 }
-                else return 0;
+                else {
+                    Logger.createLog("Deletemetadata HTTP Status:" + response.StatusCode, "e");
+                    return 0;
+                };
             }
             catch (Exception e)
             {

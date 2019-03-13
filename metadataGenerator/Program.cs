@@ -2,15 +2,21 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading;
 using System.Xml.Linq;
+using System.Windows.Forms;
 
 namespace metadataGenerator
 {
     class Program
     {
+        
+
         static void Main(string[] args)
         {
+
+
             //create necessary classes
             ConnectionSQL SqlConnection = new ConnectionSQL();
             ConnectionPostgreSQL PsqlConnetion = new ConnectionPostgreSQL();
@@ -18,8 +24,28 @@ namespace metadataGenerator
             Metadata Metadata = new Metadata();
             Parameters Parameters = new Parameters();
             Parameters.generator();
+            
 
-            Logger.createLog("Metaveri Oluşturma Başlatıldı", "i");
+            //check katalog link
+            if (Parameters.p_save2Catalog)
+            {
+                string hostUri = Parameters.p_catalogURL;
+                UriBuilder catalogUri = new UriBuilder(hostUri);
+                Logger.createLog("Checking catalog url adress", "i");
+                bool pingResult = pingHost(catalogUri.Host, catalogUri.Port);
+                if (pingResult)
+                {
+                    Logger.createLog("Catalog url adress and port ok", "s");
+                }
+                else
+                {
+                    Console.WriteLine("katalog servis adres ve portuna erişilemiyor!! " + hostUri);
+                    Logger.createLog("Check catalog adress and port not accessible!: " + hostUri, "e");
+                    MessageBox.Show("IP/Port hatalı program kapatılacak!");
+                    Environment.Exit(0);
+                }
+            }
+            
 
             string metaDataFolder = Parameters.p_metadataFolder;
             string topicCategory = Parameters.p_topicCategory;
@@ -77,6 +103,7 @@ namespace metadataGenerator
                 {
                     Console.Write("\b");
                     Logger.createLog("E/e seçildi", "i");
+                    Logger.createLog("Metaveri Oluşturma Başlatıldı", "i");
                     using (var progress = new ProgressBar())
                     {
                         
@@ -88,7 +115,7 @@ namespace metadataGenerator
                             string sit_adi = row[recordName].ToString();
                             string abstractOfRecord = sit_adi.ToString();
 
-                            //bbox
+                            //bbox format
                             string westBoundLongitude = row[bboxWest].ToString();
                             string eastBoundLongitude = row[bboxEast].ToString();
                             string southBoundLatitude = row[bboxSouth].ToString();
@@ -97,21 +124,29 @@ namespace metadataGenerator
                             //createMetaData keywords
                             List<string> keywordsColumnNames = new List<string>();
 
+                            //populate keywork columns
                             foreach (string kw in (keywords))
                             {
                                 if (row[kw].ToString() != "" || row[kw].ToString() != null)
                                     keywordsColumnNames.Add(row[kw].ToString());
                             }
 
+                            //create xml metadata
                             XDocument metadata = Metadata.createMetaData(guid, responsibleEmail, sit_adi, abstractOfRecord, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
                                                     keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources,
                                                     useLimitation, otherConstraints);
 
-                            Metadata.getRecordById(guid, Parameters.p_catalogURL, Parameters.p_catalogUsername, Parameters.p_catalogPassword);
+                            
 
                             int insertedRecord = 0;
+
+                            //if save2catalog parameter is marked as true at parameters
                             if (Parameters.p_save2Catalog)
                             {
+                                //check metadata if exists at catalog delete it
+                                Metadata.getRecordById(guid, Parameters.p_catalogURL, Parameters.p_catalogUsername, Parameters.p_catalogPassword);
+
+                                //insert new metadata to the catalog
                                 insertedRecord = Metadata.insertMetadata(metadata, Parameters.p_catalogURL,
                                                             Parameters.p_catalogUsername, Parameters.p_catalogPassword);
                             }
@@ -143,8 +178,11 @@ namespace metadataGenerator
                                 Environment.NewLine+"Katalog Servise Kayıt Sayısı: "+recordsSavedToCatalog;
                 Logger.createLog(result, "i");
                 Console.WriteLine(result);
-                Console.ReadLine();
+                MessageBox.Show(result);
+                Environment.Exit(0);
             }
+
+            
 
 
         }
@@ -162,6 +200,20 @@ namespace metadataGenerator
                 EBL = eastBoundLongitude;
                 SBL = southBoundLatitude;
                 NBL = northBoundLatitude;
+            }
+        }
+
+        public static bool pingHost(string hostUri, int portNumber)
+        {
+            try
+            {
+                using (var client = new TcpClient(hostUri, portNumber))
+                    return true;
+            }
+            catch (SocketException)
+            {
+                Console.WriteLine("Error pinging catalog host:'" + hostUri + ":" + portNumber.ToString() + "'");
+                return false;
             }
         }
     }
