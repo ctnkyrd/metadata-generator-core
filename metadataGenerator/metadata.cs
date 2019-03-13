@@ -449,21 +449,27 @@ namespace metadataGenerator
                     XDocument updateResponse = XDocument.Parse(responseStr);
                     string foundMD = "";
 
-                    try
+                    if (updateResponse.Root.Value != "")
                     {
-                        foundMD = updateResponse.Descendants(dc + "identifier").First().Value;
-                        if (foundMD.Length > 10)
+                        try
                         {
-                            int a = deleteMetadata(url, foundMD, uname, password);
-                            return a;
+                            foundMD = updateResponse.Descendants(dc + "identifier").First().Value;
+
+                            if (foundMD.Length > 10)
+                            {
+                                int a = deleteMetadata(url, foundMD, uname, password);
+                                return a;
+                            }
+                            else return 0;
                         }
-                        else return 0;
+                        catch (Exception)
+                        {
+                            Logger.createLog("Incorrect Response String Deletemetadata", "e");
+                            return 0;
+                        }
                     }
-                    catch (Exception)
-                    {
-                        Logger.createLog("Incorrect Response String Deletemetadata", "e");
-                        return 0;
-                    }
+                    else return 0;
+                   
                 }
                 else
                 {
