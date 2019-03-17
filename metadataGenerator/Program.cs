@@ -143,8 +143,9 @@ namespace metadataGenerator
                             //if save2catalog parameter is marked as true at parameters
                             if (Parameters.p_save2Catalog)
                             {
+                                
                                 //check metadata if exists at catalog delete it
-                                Metadata.getRecordById(guid, Parameters.p_catalogURL, Parameters.p_catalogUsername, Parameters.p_catalogPassword);
+                                Metadata.getRecordById(guid, Parameters.p_catalogURL, Parameters.p_catalogUsername, Parameters.p_catalogPassword, Parameters.p_catalogOverwriteSameUUID);
 
                                 //insert new metadata to the catalog
                                 insertedRecord = Metadata.insertMetadata(metadata, Parameters.p_catalogURL,

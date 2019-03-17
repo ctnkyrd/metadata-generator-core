@@ -424,7 +424,7 @@ namespace metadataGenerator
             
         }
 
-        public int getRecordById(string identifier, string url, string username, string password)
+        public int getRecordById(string identifier, string url, string username, string password, bool overwriteSameUUID)
         {
             string guid = identifier;
             try

@@ -24,6 +24,7 @@ namespace metadataGenerator
 
         //CatalogServer
         public bool p_save2Catalog { get; set; }
+        public bool p_catalogOverwriteSameUUID { get; set; }
         public string p_catalogURL { get; set; }
         public string p_catalogUsername { get; set; }
         public string p_catalogPassword { get; set; }
@@ -78,6 +79,7 @@ namespace metadataGenerator
 
             //catalog
             p_save2Catalog = Convert.ToBoolean(data.CatalogServer.saveToCatalog);
+            p_catalogOverwriteSameUUID = Convert.ToBoolean(data.CatalogServer.overwriteSameUUID);
             p_catalogURL = data.CatalogServer.url;
             p_catalogUsername = data.CatalogServer.username;
             p_catalogPassword = data.CatalogServer.password;
