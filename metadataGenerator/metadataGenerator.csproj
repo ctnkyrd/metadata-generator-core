@@ -41,6 +41,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.0\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
@@ -64,7 +65,19 @@
     <Compile Include="ConnectionSQL.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Metadata.cs" />
-    <Compile Include="Parameters.cs" />
+    <Compile Include="Paramters\AddOnlineResource.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Paramters\AddOnlineResource.Designer.cs">
+      <DependentUpon>AddOnlineResource.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Paramters\Parameters.cs" />
+    <Compile Include="Paramters\ParametersUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Paramters\ParametersUI.Designer.cs">
+      <DependentUpon>ParametersUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="ProgressBar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,6 +85,14 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Paramters\AddOnlineResource.resx">
+      <DependentUpon>AddOnlineResource.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Paramters\ParametersUI.resx">
+      <DependentUpon>ParametersUI.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

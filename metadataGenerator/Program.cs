@@ -15,7 +15,10 @@ namespace metadataGenerator
 
         static void Main(string[] args)
         {
-
+            
+            //update parameters
+            Application.Run(new ParametersUI());
+            
 
             //create necessary classes
             ConnectionSQL SqlConnection = new ConnectionSQL();
@@ -24,6 +27,8 @@ namespace metadataGenerator
             Metadata Metadata = new Metadata();
             Parameters Parameters = new Parameters();
             Parameters.generator();
+
+
             
 
             //check katalog link
