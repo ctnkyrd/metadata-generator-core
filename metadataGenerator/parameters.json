@@ -15,7 +15,8 @@
 		"saveToCatalog": "true",
 		"url": "http://192.168.30.43:8080/geonetwork",
 		"username": "admin",
-		"password": "admin"
+        "password": "admin",
+        "p_catalogOverwriteSameUUID": "true"
 	},
 
     "Kurum": {
