@@ -17,7 +17,7 @@ namespace metadataGenerator
         {
             
             //update parameters
-            Application.Run(new ParametersUI());
+            //Application.Run(new ParametersUI());
             
 
             //create necessary classes
