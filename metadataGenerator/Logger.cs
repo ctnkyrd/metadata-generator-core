@@ -9,7 +9,7 @@ namespace metadataGenerator
 {
     class Logger
     {
-        public static string logFilePath = "GENERATEDXML\\Logs";
+        public static string logFilePath = "Log";
         public static Dictionary<string, string> logTypes = new Dictionary<string, string> {
             {"i", "[INFORMATION]"},
             {"s", "[SUCCESS]"},

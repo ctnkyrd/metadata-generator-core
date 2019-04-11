@@ -11,7 +11,25 @@ namespace metadataGenerator
 {
     class Program
     {
-        
+        public static void createFolder(string folderPath)
+        {
+            Logger Logger = new Logger();
+            try
+            {
+                string path = folderPath;
+                if (!System.IO.Directory.Exists(path))
+                {
+                    System.IO.Directory.CreateDirectory(path);
+                }
+            }
+            catch (Exception e)
+            {
+
+                Logger.createLog(e.Message.ToString(), "e");
+            }
+
+        }
+
 
         static void Main(string[] args)
         {
@@ -110,6 +128,7 @@ namespace metadataGenerator
                     Console.Write("\b");
                     Logger.createLog("E/e seçildi", "i");
                     Logger.createLog("Metaveri Oluşturma Başlatıldı", "i");
+                    createFolder(metaDataFolder);
                     using (var progress = new ProgressBar())
                     {
                         
