@@ -73,7 +73,7 @@ namespace metadataGenerator
 
             string metaDataFolder = Parameters.p_metadataFolder;
             string topicCategory = Parameters.p_topicCategory;
-            List<string> keywords = Parameters.p_vt_keywords;
+            List<Parameters.Result> keywords = Parameters.p_vt_keywords;
             List<string> onlineSources = Parameters.p_onlineResources;
 
             //get static values from configuration file
@@ -81,13 +81,14 @@ namespace metadataGenerator
             string tableCriteria = Parameters.p_tableCriteria;
             string organizationEmail = Parameters.p_organizationEmail;
             string organizationName = Parameters.p_kurumName;
-            string guidColumnName = Parameters.p_vt_guid;
-            string bboxWest = Parameters.p_vt_bbox_west;
-            string bboxEast = Parameters.p_vt_bbox_east;
-            string bboxNorth = Parameters.p_vt_bbox_north;
-            string bboxSouth = Parameters.p_vt_bbox_south;
-            string resposibleEmail = Parameters.p_vt_responsibleMail;
-            string recordName = Parameters.p_vt_metadataName;
+            Parameters.Result guidColumnName = Parameters.p_vt_guid;
+            Parameters.Result bboxWest = Parameters.p_vt_bbox_west;
+            Parameters.Result bboxEast = Parameters.p_vt_bbox_east;
+            Parameters.Result bboxNorth = Parameters.p_vt_bbox_north;
+            Parameters.Result bboxSouth = Parameters.p_vt_bbox_south;
+            Parameters.Result resposibleEmail = Parameters.p_vt_responsibleMail;
+            Parameters.Result recordName = Parameters.p_vt_metadataName;
+            Parameters.Result abstact = Parameters.p_vt_abstract;
 
             //new variables
             string useLimitation = Parameters.p_useLimitation;
@@ -128,47 +129,86 @@ namespace metadataGenerator
                     Console.Write("\b");
                     Logger.createLog("E/e seçildi", "i");
                     Logger.createLog("Metaveri Oluşturma Başlatıldı", "i");
-                    createFolder(metaDataFolder);
+                    //createFolder(metaDataFolder);
                     using (var progress = new ProgressBar())
                     {
                         
                         foreach (DataRow row in table.Rows)
                         {
                             //fetch data from dt by SQL column names
-                            string guid = row[guidColumnName].ToString();
-                            string responsibleEmail = row[resposibleEmail].ToString();
-                            string sit_adi = row[recordName].ToString();
-                            string abstractOfRecord = sit_adi.ToString();
+                            string guid, mail, metadataAdi, abstractOfRecord;
+                            if (guidColumnName.status)
+                            {
+                                guid = row[guidColumnName.value].ToString();
+                            }
+                            else
+                            {
+                                guid = guidColumnName.value.ToString();
+                            }
+
+                            if (resposibleEmail.status)
+                            {
+                                mail = row[resposibleEmail.value].ToString();
+                            }
+                            else
+                            {
+                                mail = resposibleEmail.value.ToString();
+
+                            }
+
+                            if (recordName.status)
+                            {
+                                metadataAdi = row[recordName.value].ToString();
+                            }
+                            else
+                            {
+                                metadataAdi = recordName.value.ToString();
+
+                            }
+
+                            if (abstact.status)
+                            {
+                                abstractOfRecord = row[abstact.value].ToString();
+                            }
+                            else
+                            {
+                                abstractOfRecord = abstact.value.ToString();
+
+                            }
 
                             //bbox format
-                            string westBoundLongitude = row[bboxWest].ToString();
-                            string eastBoundLongitude = row[bboxEast].ToString();
-                            string southBoundLatitude = row[bboxSouth].ToString();
-                            string northBoundLatitude = row[bboxNorth].ToString();
+                            string westBoundLongitude = row[bboxWest.value].ToString();
+                            string eastBoundLongitude = row[bboxEast.value].ToString();
+                            string southBoundLatitude = row[bboxSouth.value].ToString();
+                            string northBoundLatitude = row[bboxNorth.value].ToString();
 
                             //createMetaData keywords
                             List<string> keywordsColumnNames = new List<string>();
 
                             //populate keywork columns
-                            foreach (string kw in (keywords))
+                            foreach (Parameters.Result kw in (keywords))
                             {
-                                if (row[kw].ToString() != "" || row[kw].ToString() != null)
-                                    keywordsColumnNames.Add(row[kw].ToString());
+                                if (kw.status)
+                                {
+                                    if (row[kw.value].ToString() != "" || row[kw.value].ToString() != null)
+                                    {
+                                        keywordsColumnNames.Add(row[kw.value].ToString());
+                                    }
+                                }
+                                else
+                                {
+                                    keywordsColumnNames.Add(kw.value);
+                                }                                 
                             }
 
                             //create xml metadata
-                            XDocument metadata = Metadata.createMetaData(guid, responsibleEmail, sit_adi, abstractOfRecord, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,
-                                                    keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources,
-                                                    useLimitation, otherConstraints);
-
-                            
+                            XDocument metadata = Metadata.createMetaData(guid, mail, metadataAdi, abstractOfRecord, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources,useLimitation, otherConstraints);
 
                             int insertedRecord = 0;
 
                             //if save2catalog parameter is marked as true at parameters
                             if (Parameters.p_save2Catalog)
                             {
-                                
                                 //check metadata if exists at catalog delete it
                                 Metadata.getRecordById(guid, Parameters.p_catalogURL, Parameters.p_catalogUsername, Parameters.p_catalogPassword, Parameters.p_catalogOverwriteSameUUID);
 

@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="ConnectionPostgreSQL.cs" />
     <Compile Include="ConnectionSQL.cs" />
+    <Compile Include="DataAccess.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Metadata.cs" />
     <Compile Include="Paramters\AddOnlineResource.cs">

@@ -16,8 +16,6 @@ namespace metadataGenerator
         //string connectionString = ConfigurationManager.AppSettings["PostgreSQLConnection"];
         Logger Logger = new Logger();
 
-
-
         public DataTable getResults(string query)
         {
             try

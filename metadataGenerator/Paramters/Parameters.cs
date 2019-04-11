@@ -8,8 +8,16 @@ using System.Text.RegularExpressions;
 
 namespace metadataGenerator
 {
+   
+
     class Parameters
     {
+        public class Result
+        {
+            public bool status { get; set; }
+            public string value { get; set; }
+        }
+
         static string paramters_file = ConfigurationManager.AppSettings["parameters"];
 
         static Regex rFilter = new Regex(@"^({[Tt])@(.*)}$");
@@ -33,17 +41,18 @@ namespace metadataGenerator
         public string p_kurumName { get; set; }
         public string p_organizationEmail { get; set; }
         //Record Base Information
-        public List<string> p_vt_keywords { get; set; }
+        public List<Result> p_vt_keywords { get; set; }
         public string p_tableName { get; set; }
         public string p_tableCriteria { get; set; }
-        public string p_vt_guid { get; set; }
-        public string p_vt_metadataName { get; set; }
-        public string p_vt_responsibleMail { get; set; }
+        public Result p_vt_guid { get; set; }
+        public Result p_vt_metadataName { get; set; }
+        public Result p_vt_responsibleMail { get; set; }
+        public Result p_vt_abstract { get; set; }
         //BBOX
-        public string p_vt_bbox_west { get; set; }
-        public string p_vt_bbox_east { get; set; }
-        public string p_vt_bbox_north { get; set; }
-        public string p_vt_bbox_south { get; set; }
+        public Result p_vt_bbox_west { get; set; }
+        public Result p_vt_bbox_east { get; set; }
+        public Result p_vt_bbox_north { get; set; }
+        public Result p_vt_bbox_south { get; set; }
 
         public string p_useLimitation { get; set; }
         public string p_otherConstraints { get; set; }
@@ -63,6 +72,7 @@ namespace metadataGenerator
             p_tableName = data.Table.TableName;
             p_tableCriteria = data.Table.Criteria;
             p_vt_metadataName = getColumnName(data.Table.MetadataName);
+            p_vt_abstract = getColumnName(data.Table.Abstract);
 
             p_useLimitation = data.General.useLimitation;
             p_otherConstraints = data.General.otherConstraints;
@@ -85,21 +95,44 @@ namespace metadataGenerator
             p_catalogPassword = data.CatalogServer.password;
         }
 
-        public string getColumnName(JValue column)
+        public Result getColumnName(JValue column)
         {
             string columName = column.ToString();
             Match match = rFilter.Match(columName);
-            if (match.Success) return match.Groups[2].Value;
-            else return "No Match";
+            Result result = new Result();
+            if (match.Success)
+            {
+                result.status = true;
+                result.value = match.Groups[2].Value;
+                return result;
+            }
+            else
+            {
+                result.status = false;
+                result.value = column.ToString();
+                return result;
+            }
         }
 
-        public List<string> getColumnNamesMulti(JArray column)
+        public List<Result> getColumnNamesMulti(JArray column)
         {
-            List<string> arrayList = new List<string>();
+            List<Result> arrayList = new List<Result>();
             foreach (JToken i in column)
             {
+                Result result = new Result();
                 Match match = rFilter.Match(i.Value<string>("Name"));
-                if (match.Success) arrayList.Add(match.Groups[2].Value);
+                if (match.Success)
+                {
+                    result.status = true;
+                    result.value = match.Groups[2].Value;
+                    arrayList.Add(result);
+                }
+                else
+                {
+                    result.status = false;
+                    result.value = i.Value<string>("Name");
+                    arrayList.Add(result);
+                }
             }
             return arrayList;
         }

@@ -33,6 +33,7 @@
         ],
         "GUID": "{T@guid}",
         "MetadataName": "{T@adi}",
+        "Abstract":"aaa",
         "ResponsibleMail": "{T@mail}",
         "BBOX": {
             "westLongitute": "{T@st_xmin}",

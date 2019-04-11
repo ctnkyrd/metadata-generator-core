@@ -343,6 +343,7 @@ namespace metadataGenerator
 
                     )
                 );
+                createFolder(metaDataFolder);
                 xdoc.Save(metaDataFolder + "\\" + fileName + ".xml");
                 return xdoc;
             }
@@ -557,7 +558,26 @@ namespace metadataGenerator
 
         }
 
-        
+        public static void createFolder(string folderPath)
+        {
+            Logger Logger = new Logger();
+            try
+            {
+                string path = folderPath;
+                if (!System.IO.Directory.Exists(path))
+                {
+                    System.IO.Directory.CreateDirectory(path);
+                }
+            }
+            catch (Exception e)
+            {
+
+                Logger.createLog(e.Message.ToString(), "e");
+            }
+
+        }
+
+
 
     }
 
