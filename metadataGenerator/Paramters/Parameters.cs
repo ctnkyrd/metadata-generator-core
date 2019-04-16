@@ -25,7 +25,7 @@ namespace metadataGenerator
         dynamic data = JsonConvert.DeserializeObject(File.ReadAllText(paramters_file));
 
         //General Information
-        public string p_metadataFolder{get;set;}
+        public Result p_metadataFolder{get;set;}
         public string p_postgresqlConnectionString {get;set;}
         public string p_topicCategory { get; set; }
         public List<string> p_onlineResources { get; set; }
@@ -65,7 +65,7 @@ namespace metadataGenerator
 
         public void generator()
         {
-            p_metadataFolder = data.General.MetadataFolder;
+            p_metadataFolder = getColumnName(data.General.MetadataFolder);
             p_topicCategory = data.General.TopicCategory;
             p_onlineResources = jArray2ListString(data.General.OnlineResources);
             p_vt_keywords = getColumnNamesMulti(data.Table.KeywordsColumns);

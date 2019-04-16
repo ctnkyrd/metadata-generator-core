@@ -71,7 +71,7 @@ namespace metadataGenerator
             }
             
 
-            string metaDataFolder = Parameters.p_metadataFolder;
+            
             string topicCategory = Parameters.p_topicCategory;
             List<Parameters.Result> keywords = Parameters.p_vt_keywords;
             List<string> onlineSources = Parameters.p_onlineResources;
@@ -89,6 +89,7 @@ namespace metadataGenerator
             Parameters.Result resposibleEmail = Parameters.p_vt_responsibleMail;
             Parameters.Result recordName = Parameters.p_vt_metadataName;
             Parameters.Result abstact = Parameters.p_vt_abstract;
+            Parameters.Result metaDataFolder = Parameters.p_metadataFolder;
 
             //new variables
             string useLimitation = Parameters.p_useLimitation;
@@ -136,7 +137,7 @@ namespace metadataGenerator
                         foreach (DataRow row in table.Rows)
                         {
                             //fetch data from dt by SQL column names
-                            string guid, mail, metadataAdi, abstractOfRecord;
+                            string guid, mail, metadataAdi, abstractOfRecord, metadataFolderName;
                             if (guidColumnName.status)
                             {
                                 guid = row[guidColumnName.value].ToString();
@@ -173,7 +174,15 @@ namespace metadataGenerator
                             else
                             {
                                 abstractOfRecord = abstact.value.ToString();
+                            }
 
+                            if (metaDataFolder.status)
+                            {
+                                metadataFolderName = row[metaDataFolder.value].ToString();
+                            }
+                            else
+                            {
+                                metadataFolderName = metaDataFolder.value.ToString();
                             }
 
                             //bbox format
@@ -202,7 +211,7 @@ namespace metadataGenerator
                             }
 
                             //create xml metadata
-                            XDocument metadata = Metadata.createMetaData(guid, mail, metadataAdi, abstractOfRecord, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,keywordsColumnNames, organizationName, organizationEmail, metaDataFolder, topicCategory, onlineSources,useLimitation, otherConstraints);
+                            XDocument metadata = Metadata.createMetaData(guid, mail, metadataAdi, abstractOfRecord, westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude,keywordsColumnNames, organizationName, organizationEmail, metadataFolderName, topicCategory, onlineSources,useLimitation, otherConstraints);
 
                             int insertedRecord = 0;
 
